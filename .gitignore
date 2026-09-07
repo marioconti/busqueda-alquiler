@@ -1,0 +1,19 @@
+# Datos scrapeados: 54 MB y se regeneran con `python scripts/main.py`.
+data/avisos.json
+data/ids_vistos.json
+data/raw/
+data/logs/
+data/propiedades.csv
+
+# Fotos locales: 36 MB. Solo sirven para que Claude mire y clasifique el estado;
+# la pagina publicada muestra las remotas del CDN.
+web/fotos/
+
+# Capturas de trabajo.
+web/_vista-*.png
+
+# El data.js completo pesa 54 MB y no abre en un telefono. Se publica el liviano.
+web/data.js
+
+__pycache__/
+*.pyc
