@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "version": 1,
+    "generado": "2026-08-14",
+    "por_que_importa": "Es la unica fuente de datos que NO viene filtrada por el anunciante. Alimenta el bucle de aprendizaje igual que los descartes, y pesa mas.",
+    "esquema": {
+      "id_aviso": "id del aviso en avisos.json",
+      "fecha": "AAAA-MM-DD",
+      "quien_mostro": "nombre del corredor / dueno",
+      "gusto": "lista de cosas que gustaron, con las palabras de Mario",
+      "no_gusto": "lista de cosas que no gustaron, con las palabras de Mario",
+      "ruido_real": "que se escuchaba de verdad estando adentro",
+      "no_declarado": "lo que la propiedad tenia y el aviso no decia (en las dos direcciones)",
+      "estado_real": "a_estrenar | reciclado | bueno | cosmetico | a_refaccionar",
+      "m2_percibidos_vs_declarados": "coinciden | menos | mas",
+      "respuestas": "respuestas a las preguntas previas a la visita",
+      "veredicto": "avanzo | descarto | dudo",
+      "aprendizaje": "lo escribe el Asesor"
+    }
+  },
+  "visitas": []
+}

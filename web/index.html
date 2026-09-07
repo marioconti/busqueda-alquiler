@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Busqueda de alquiler - CABA</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="barra" id="barra">
+    <div class="barra-fila">
+      <!-- Dos grupos: al angostarse la ventana envuelven como bloques, no de a un item.
+           Con items sueltos + un espaciador flex:1, cada uno se iba a su propia linea. -->
+      <div class="grupo">
+        <div class="marca">
+          <span class="marca-nombre">Busqueda de alquiler</span>
+          <span class="marca-zona">CABA</span>
+        </div>
+
+        <nav class="tabs" id="tabs" role="tablist" aria-label="Vistas">
+          <button data-vista="favoritos" class="on" role="tab" aria-selected="true">
+            Favoritos <span class="pill" id="cuenta-favoritos" hidden>0</span>
+          </button>
+          <button data-vista="explorar" role="tab" aria-selected="false">Explorar</button>
+          <button data-vista="nuevos" role="tab" aria-selected="false">
+            Ultimas 2 semanas <span class="pill" id="cuenta-nuevos" hidden>0</span>
+          </button>
+          <button data-vista="descartados" role="tab" aria-selected="false">Descartados</button>
+          <button data-vista="actividad" role="tab" aria-selected="false">Actividad</button>
+        </nav>
+      </div>
+
+      <div class="grupo grupo-der">
+        <button class="btn" id="btn-filtros" aria-expanded="false" aria-controls="filtros">
+          Filtros
+          <span class="pill" id="filtros-activos" hidden>0</span>
+        </button>
+        <label class="cotiz" for="cotizacion">
+          <span>Dolar BNA</span>
+          <input type="number" id="cotizacion" placeholder="0" min="0" step="1">
+        </label>
+        <span id="pendientes" class="estado-guardado"></span>
+        <button class="btn" id="btn-exportar">Exportar decisiones</button>
+      </div>
+    </div>
+
+    <div class="filtros" id="filtros" hidden>
+      <div class="campo"><label for="f-precio-min">Precio USD min</label><input type="number" id="f-precio-min" step="50"></div>
+      <div class="campo"><label for="f-precio-max">Precio USD max</label><input type="number" id="f-precio-max" step="50"></div>
+      <div class="campo"><label for="f-dorm">Dorm. min</label><input type="number" id="f-dorm" step="1"></div>
+      <div class="campo"><label for="f-banos">Banos min</label><input type="number" id="f-banos" step="1"></div>
+      <div class="campo"><label for="f-m2">m² cub. min</label><input type="number" id="f-m2" step="10"></div>
+      <div class="campo"><label for="f-ext">m² ext. min</label><input type="number" id="f-ext" step="10"></div>
+      <!-- Los campos altos (los select multiples) van DESPUES de los bajos: mezclados,
+           cada label quedaba a una altura distinta y la fila se leia en zigzag. -->
+      <div class="campo"><label for="f-estado">Estado minimo</label>
+        <select id="f-estado">
+          <option value="">cualquiera</option>
+          <option value="bueno">bueno o mejor</option>
+          <option value="reciclado">reciclado o mejor</option>
+          <option value="a_estrenar">a estrenar</option>
+        </select>
+      </div>
+      <div class="campo campo-doble"><label for="f-orden">Orden</label>
+        <select id="f-orden">
+          <option value="default">estado visual, luego score</option>
+          <option value="score">score (piso)</option>
+          <option value="precio">precio</option>
+          <option value="m2">m² cubiertos</option>
+          <option value="ext">m² de exterior</option>
+          <option value="fecha">fecha de publicacion</option>
+          <option value="num">numero (#)</option>
+        </select>
+      </div>
+      <div class="campo campo-doble"><label for="f-barrio">Barrio</label><select id="f-barrio" multiple size="5"></select></div>
+      <div class="campo campo-doble"><label for="f-tipo">Tipo</label><select id="f-tipo" multiple size="5"></select></div>
+      <div class="campo campo-ancho">
+        <label>Marcas</label>
+        <div class="chips" id="f-chips">
+          <button class="chip" data-flag="ver_fuera_de_filtro" aria-pressed="false">Ver los que no entran</button>
+          <button class="chip" data-flag="solo_caba" aria-pressed="false">Solo CABA</button>
+          <button class="chip" data-flag="solo_gba" aria-pressed="false">Solo Zona Norte</button>
+          <button class="chip" data-flag="parrilla" aria-pressed="false">Parrilla propia</button>
+          <button class="chip" data-flag="sin_expensas" aria-pressed="false">Sin expensas</button>
+          <button class="chip" data-flag="mascotas" aria-pressed="false">Acepta mascotas</button>
+          <button class="chip" data-flag="dueno" aria-pressed="false">Dueno directo</button>
+          <button class="chip" data-flag="con_fotos" aria-pressed="false">Con fotos</button>
+          <button class="chip" data-flag="ver_caidos" aria-pressed="false">Ver los caidos</button>
+        </div>
+      </div>
+      <button class="btn" id="btn-limpiar">Limpiar</button>
+    </div>
+  </header>
+
+  <div class="banda" id="banda" hidden></div>
+
+  <div class="hoja">
+    <main id="main"></main>
+    <footer class="pie" id="pie"></footer>
+  </div>
+
+</div>
+
+<div class="velo" id="velo"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Detalle de la propiedad"></aside>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

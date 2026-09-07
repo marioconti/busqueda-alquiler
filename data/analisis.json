@@ -1,0 +1,268 @@
+{
+  "meta": {
+    "version": 1,
+    "generado": "2026-08-14",
+    "por_que_archivo_aparte": "Esto es prosa escrita por el Asesor y el Corredor, no datos scrapeados. Vive separado de avisos.json para que un re-scrapeo del aviso no pise el analisis. build.py los fusiona por id.",
+    "advertencia": "Escrito solo con los datos de la semilla (direccion, precio, m2, dorm, banos, exterior y titulo del aviso). Ninguna de estas fichas se apoya en haber leido la descripcion completa ni las fotos."
+  },
+  "analisis": {
+    "zp-59773617": {
+      "a_favor": [
+        "130 m2 cubiertos, 4 dormitorios reales y 3 banos completos por USD 1.584: 12,2 USD/m2, de lo mejor del grupo.",
+        "Tres espacios exteriores distintos (jardin, patio con parrilla y terraza): es casa entera sobre lote, no un PH con balcon.",
+        "Unica del grupo que combina 4 dormitorios con 3 banos por debajo de USD 1.600."
+      ],
+      "en_contra": [
+        "Ninguno de los tres exteriores declara m2, y el exterior es el criterio que mas pesa (25 puntos).",
+        "130 m2 y ni una palabra sobre el estado. Silencio en una superficie asi es sospechoso, no neutro.",
+        "Triplex de 5 ambientes: tres plantas, escaleras, y probablemente ningun dormitorio en planta baja."
+      ],
+      "llamaria_hoy": true,
+      "primera_pregunta": "Cuantos m2 tiene el jardin y cuantos la terraza, y en que ano fue la ultima reforma.",
+      "preguntas": [
+        "M2 exactos de jardin, patio y terraza por separado.",
+        "Ano de la ultima reforma y que se hizo (instalacion electrica, banos, cocina, techos).",
+        "La terraza esta impermeabilizada y de cuando.",
+        "Acepta gato y queda por escrito en el contrato.",
+        "Contrato a 2 anos, indice y frecuencia de ajuste.",
+        "Que garantias acepta ademas de la propietaria."
+      ]
+    },
+    "zp-59834788": {
+      "a_favor": [
+        "62 m2 de exterior DECLARADOS con quincho y parrilla: es de las pocas que da el numero en vez de decir 'terraza'.",
+        "121 m2 cubiertos, 3 dormitorios con uno en suite, 2 banos completos y cochera.",
+        "Saavedra, que es el unico barrio que viene rindiendo."
+      ],
+      "en_contra": [
+        "El quincho puede ser cerrado: si lo es, esos m2 valen la mitad y la terraza real al sol es bastante menos que 62.",
+        "USD 1.716 por 121 m2 = 14,2 USD/m2, en la mediana. No es una oportunidad, es precio de mercado.",
+        "Sin una palabra sobre el estado."
+      ],
+      "llamaria_hoy": true,
+      "primera_pregunta": "De los 62 m2, cuantos son quincho techado y cuantos terraza descubierta.",
+      "preguntas": [
+        "Reparto de los 62 m2 entre quincho techado y terraza al sol.",
+        "Ano de la ultima reforma.",
+        "La cochera esta incluida en el precio o se cobra aparte.",
+        "Expensas: cuanto y que incluyen.",
+        "Acepta gato por escrito."
+      ]
+    },
+    "zp-49100787": {
+      "a_favor": [
+        "DUENO DIRECTO: menos friccion en la garantia y menos intermediarios. Es el blando que mas destraba en la practica.",
+        "Reciclada declarada, 64 m2 de terraza con parrilla mas patio, 120 m2 cubiertos, por USD 1.400.",
+        "La mejor combinacion en papel de los doce: 11,7 USD/m2 con exterior declarado y reforma declarada."
+      ],
+      "en_contra": [
+        "UN solo bano completo para 3 dormitorios. Es el punto flojo y no se arregla.",
+        "'Casa antigua reciclada' es reforma sobre estructura vieja: hay que saber que se recliclo y que quedo igual (instalaciones, techos, humedad).",
+        "ID 49100787 contra 57-59 millones del resto: aviso de larga permanencia o republicado. O el dueno no tiene apuro, o algo lo frena."
+      ],
+      "llamaria_hoy": true,
+      "primera_pregunta": "Hace cuanto esta publicada y por que no se alquilo todavia.",
+      "preguntas": [
+        "Hace cuanto esta publicada y cuanta gente la vio.",
+        "Que incluyo el reciclado: instalacion electrica, agua, techos, banos, cocina. Y en que ano.",
+        "Se puede agregar un segundo bano o toilette.",
+        "La terraza esta impermeabilizada.",
+        "Contrato a 2 anos, ajuste, deposito.",
+        "Acepta gato."
+      ]
+    },
+    "zp-59532925": {
+      "a_favor": [
+        "200 m2 cubiertos: la mas grande del grupo por lejos, con 4 dormitorios y 3 banos.",
+        "Cochera, patio y quincho con parrilla.",
+        "9,1 USD/m2 cubierto: el mejor ratio de los doce."
+      ],
+      "en_contra": [
+        "USD 2.000 clavado en el tope. Si las expensas no estan incluidas, se pasa del presupuesto.",
+        "200 m2 sin UNA palabra sobre el estado. En el vocabulario de los avisos ese silencio es la peor senal de todas, y en una casa de este tamano puede significar una reforma que no se puede pagar en consumo de gas y calefaccion.",
+        "El quincho es techado: no cuenta como exterior al sol."
+      ],
+      "llamaria_hoy": true,
+      "primera_pregunta": "El precio incluye expensas e impuestos, y en que ano fue la ultima reforma de instalaciones.",
+      "preguntas": [
+        "Que incluye exactamente los USD 2.000: expensas, ABL, AYSA.",
+        "Ano de la ultima reforma de instalacion electrica y de gas.",
+        "Como se calefacciona y cuanto sale un invierno.",
+        "M2 del patio descubierto (aparte del quincho).",
+        "Estado de techos y si hubo filtraciones.",
+        "Acepta gato."
+      ]
+    },
+    "zp-59818437": {
+      "a_favor": [
+        "Unico acierto de Palermo en cinco corridas: si el objetivo es no encerrarse en Saavedra, esta es la carta.",
+        "120 m2 cubiertos, 3 dormitorios, 2 banos y tres exteriores (balcon, patio y terraza) por USD 1.518.",
+        "12,7 USD/m2 en Palermo Soho es barato para la zona."
+      ],
+      "en_contra": [
+        "Gorriti al 4900 es Palermo Soho pleno: bares, gastronomia y ruido nocturno. La tranquilidad es prioritaria y esta es la peor ubicada del grupo en ese criterio.",
+        "Triplex: tres plantas y escaleras.",
+        "Ningun exterior con m2 y ninguna palabra sobre estado. Barato en Soho normalmente se explica por algo."
+      ],
+      "llamaria_hoy": false,
+      "primera_pregunta": "Que hay en la planta baja del edificio de al lado y de enfrente: bar, restaurante o local nocturno.",
+      "preguntas": [
+        "Que hay en los locales linderos y de enfrente.",
+        "Los dormitorios dan al frente o al contrafrente.",
+        "M2 de patio y de terraza por separado.",
+        "Por que esta por debajo del precio de la zona.",
+        "Acepta gato."
+      ]
+    },
+    "zp-59817477": {
+      "a_favor": [
+        "Declara las dos cosas que mas pesan y encima de forma explicita: LOTE PROPIO y REFACCIONADA. Casi ninguna del grupo dice ambas.",
+        "Casa sobre lote propio = cero vecinos, cero expensas, cero consorcio.",
+        "Saavedra, 3 dormitorios, 2 banos completos."
+      ],
+      "en_contra": [
+        "USD 2.000 por 103 m2 = 19,4 USD/m2: la peor relacion precio/superficie de los doce, y esta en el tope del presupuesto.",
+        "El unico exterior declarado es 'patio', sin m2. Por ese precio y en ese barrio se consigue mas exterior.",
+        "Comparada contra Conde 4700 (130 m2, 4 dorm, 3 banos, tres exteriores, USD 1.584) pierde en todo salvo en el 'refaccionada'."
+      ],
+      "llamaria_hoy": false,
+      "primera_pregunta": "Que incluyo la refaccion y cuantos m2 tiene el patio, porque a USD 2.000 en Saavedra esta cara.",
+      "preguntas": [
+        "Alcance y ano de la refaccion.",
+        "M2 del patio y si tiene sol.",
+        "Es negociable el precio.",
+        "El lote es propio y de cuantos m2 en total.",
+        "Acepta gato."
+      ]
+    },
+    "zp-59647566": {
+      "a_favor": [
+        "El mas barato del grupo: USD 1.320 por un duplex de 3 dormitorios en Saavedra.",
+        "Patio propio con parrilla.",
+        "13,9 USD/m2, en la mediana, en el barrio que mejor viene rindiendo."
+      ],
+      "en_contra": [
+        "95 m2 cubiertos: apenas 5 sobre el minimo. Con 3 dormitorios ahi adentro, el living y la cocina van a ser chicos, que es justo lo que el minimo de 90 buscaba evitar.",
+        "Un bano completo mas un toilette para 3 dormitorios.",
+        "'Muy buen estado' esta a un paso de 'muy bien conservado', que en el vocabulario de los avisos es maquillaje sobre estructura vieja. No nombra ni una reforma concreta."
+      ],
+      "llamaria_hoy": false,
+      "primera_pregunta": "Que se reformo y en que ano, porque 'muy buen estado' no dice nada.",
+      "preguntas": [
+        "Que se reformo concretamente y cuando.",
+        "M2 del living y de la cocina por separado.",
+        "M2 del patio.",
+        "El toilette se puede convertir en bano completo.",
+        "Acepta gato."
+      ]
+    },
+    "zp-59555075": {
+      "a_favor": [
+        "Dos terrazas con parrilla en 120 m2 cubiertos por USD 1.320: 11 USD/m2, de los mejores ratios.",
+        "Nunez, con exterior propio y sin expensas de torre.",
+        "Empatado con Vedia como el mas barato de los doce, con 25 m2 cubiertos mas."
+      ],
+      "en_contra": [
+        "Un solo bano completo (los otros dos son auxiliares) para 3 dormitorios.",
+        "Titulo generico -'ph en nunez'- y ni una palabra sobre estado en 120 m2. Un aviso que no vende nada suele ser un aviso que no tiene nada que vender.",
+        "Las dos terrazas no declaran m2: puede ser el mejor exterior del grupo o dos patios de servicio."
+      ],
+      "llamaria_hoy": true,
+      "primera_pregunta": "M2 de cada terraza y que son los dos banos auxiliares.",
+      "preguntas": [
+        "M2 de cada una de las dos terrazas y si estan al sol.",
+        "Que son exactamente los dos banos auxiliares: toilette, bano de servicio, ducha.",
+        "Ano de la ultima reforma.",
+        "Cuantas unidades tiene el PH y quien vive en las otras.",
+        "Entrada independiente.",
+        "Acepta gato."
+      ]
+    },
+    "zp-57442572": {
+      "a_favor": [
+        "40 m2 de terraza EXCLUSIVA declarados con numero: es el caso que justifica toda la seccion 'Al limite'.",
+        "Probable dueno directo (slug de particular).",
+        "Colegiales con terraza exclusiva es producto escaso: los PH reciclados con terraza de esa zona normalmente terminan amoblados a USD 3.000."
+      ],
+      "en_contra": [
+        "73 m2 cubiertos contra un minimo de 90: -18,9%. Es el mayor desvio duro de todo el grupo.",
+        "Alvarez Thomas al 200 es AVENIDA, y la tranquilidad es prioritaria.",
+        "23 USD/m2 cubierto: el mas caro por metro de los doce, y con un solo bano."
+      ],
+      "llamaria_hoy": true,
+      "primera_pregunta": "Los dormitorios dan a la avenida o al contrafrente, y cuanto se escucha de noche.",
+      "preguntas": [
+        "Orientacion de los dormitorios respecto de la avenida y nivel de ruido real.",
+        "Tiene doble vidrio (DVH).",
+        "La terraza de 40 m2 es de uso exclusivo por contrato o por costumbre.",
+        "Esta impermeabilizada y quien paga una filtracion.",
+        "M2 reales del living y la cocina, que con 73 m2 y 3 dormitorios es lo que va a apretar.",
+        "Acepta gato."
+      ]
+    },
+    "zp-58969256": {
+      "a_favor": [
+        "USD 1.188 por una casa de 106 m2 en Belgrano R: es el precio mas bajo del grupo en uno de los barrios mas caros.",
+        "Terraza de 24 m2 con parrilla, declarada con numero.",
+        "11,2 USD/m2 en Belgrano R esta muy por debajo de la zona."
+      ],
+      "en_contra": [
+        "LA GARANTIA. Pide solo propietaria de CABA y no acepta caucion. Es probablemente lo que explica el precio, y es el filtro mas dificil de saltar.",
+        "El 'patio cubierto' del titulo no es exterior al sol: el unico exterior util son los 24 m2 de terraza.",
+        "Un solo bano completo para 3 dormitorios."
+      ],
+      "llamaria_hoy": true,
+      "primera_pregunta": "Aceptan seguro de caucion o garantia propietaria de provincia, si o si.",
+      "preguntas": [
+        "Aceptan caucion, y de que companias. Aceptan propietaria de GBA.",
+        "Que hace falta ademas de la garantia (recibos, facturacion, garante adicional).",
+        "Por que esta tan por debajo del precio de Belgrano R.",
+        "El patio cubierto tiene sol en algun momento del dia.",
+        "Acepta gato."
+      ]
+    },
+    "zp-59800351": {
+      "a_favor": [
+        "110 m2 cubiertos y 2 banos completos: de las pocas que resuelve bien el interior.",
+        "Direccion exacta con numero, o sea que el entorno se puede verificar sin ambiguedad antes de perder un sabado.",
+        "Nunez, PH, sin expensas de torre."
+      ],
+      "en_contra": [
+        "El unico exterior es una 'terraza pequena' sin m2. En el criterio que mas pesa, es la mas floja de las doce.",
+        "USD 1.800 = 16,4 USD/m2, por encima de la mediana, sin exterior que lo justifique.",
+        "Sin una palabra sobre el estado."
+      ],
+      "llamaria_hoy": false,
+      "primera_pregunta": "Cuantos m2 tiene la terraza, porque 'pequena' a USD 1.800 no cierra.",
+      "preguntas": [
+        "M2 de la terraza y si tiene sol.",
+        "Ano de la ultima reforma.",
+        "Cuantas unidades tiene el PH y si la entrada es independiente.",
+        "Es negociable el precio.",
+        "Acepta gato."
+      ]
+    },
+    "zp-59769553": {
+      "a_favor": [
+        "194 m2 totales con 139 cubiertos y 55 descubiertos con pileta: es el segundo mejor interior del grupo.",
+        "2 banos completos mas toilette, 3 dormitorios.",
+        "Palermo Hollywood, que en este segmento casi no da producto sin amoblar."
+      ],
+      "en_contra": [
+        "USD 2.112: 5,6% por encima del tope. Entra a 'Al limite', no al ranking principal.",
+        "Pileta en Palermo Hollywood a este precio es exactamente el perfil del producto temporario o amoblado, que es el mercado que capturo esa zona. Hay que descartar eso ANTES de invertir tiempo.",
+        "Los 55 m2 descubiertos son derivados por resta, no declarados, y una parte se la lleva la pileta: exterior util real, menos.",
+        "Sin una palabra sobre estado."
+      ],
+      "llamaria_hoy": false,
+      "primera_pregunta": "Se alquila vacio y por contrato de 2 anos, o es temporario amoblado.",
+      "preguntas": [
+        "Se entrega sin muebles y con contrato de 2 anos.",
+        "Cuanto del patio ocupa la pileta y quien paga su mantenimiento.",
+        "Que incluyen los USD 2.112 y si hay expensas aparte.",
+        "Es negociable para bajar a 2.000.",
+        "Acepta gato."
+      ]
+    }
+  }
+}

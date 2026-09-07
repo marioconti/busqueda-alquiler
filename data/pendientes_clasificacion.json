@@ -1,0 +1,253 @@
+{
+  "generado": "2026-09-06",
+  "como_completar": "Para cada item: mirar las fotos de 'fotos' y agregar el objeto 'visual' con las claves de ESQUEMA_FOTOS (estado_visual, decada_estimada_ultima_reforma, cocina, banos, terraza_m2_estimados, terraza_utilizable, banderas_rojas, confianza). Guardar y correr: python scripts/clasificar.py aplicar <archivo>",
+  "criterio": "Sos un arquitecto mirando las fotos de un aviso de alquiler.\n\nEl paso de fotos existe para hacer dos cosas que el texto no puede: (a) determinar el\nestado REAL, no el declarado, y (b) estimar la superficie de terraza cuando el aviso no\nla declara. Son las dos que mas pesan en la decision.\n\n- estado_visual: lo que ves, no lo que el aviso dice. Buscá humedad, revoque flojo,\n  carpinteria vieja, instalacion a la vista, pisos originales sin reformar, banos y\n  cocinas de decada anterior.\n- decada_estimada_ultima_reforma: aproximada, en base a griferia, azulejos, mesadas,\n  aberturas. Un jacuzzi delata un reciclado de los 2000.\n- terraza_m2_estimados: estimala comparando contra objetos de escala conocida (baldosas,\n  una silla, una mesa, una parrilla). Si no hay foto de exterior, null.\n- terraza_utilizable: false si esta sin impermeabilizar, si tiene tanques de agua,\n  tendederos fijos, maquinas de aire acondicionado o esta ocupada por instalaciones.\n  Una terraza que no se puede caminar y llenar de plantas no sirve.\n- banderas_rojas: problemas constructivos concretos y visibles.\n- confianza: \"baja\" si hay pocas fotos, si son borrosas, si no muestran los ambientes\n  principales, o si el aviso declaro que las imagenes fueron generadas con IA.\n\nNo inventes lo que no se ve en las fotos.",
+  "items": [
+    {
+      "id": "zp-59822710",
+      "num": 473,
+      "direccion": "Altolaguirre 1936",
+      "barrio": "Villa Urquiza",
+      "tipo": "ph",
+      "precio_usd": 980.0,
+      "score_piso": 61.9,
+      "estado_declarado": "reciclado",
+      "m2_cubiertos": 78.0,
+      "m2_descubiertos": 17.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59822710/01.jpg",
+        "fotos/zp-59822710/02.jpg",
+        "fotos/zp-59822710/03.jpg"
+      ],
+      "hash_fotos": "f54ce14024f452d2",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphpa-ph-de-gran-calidad-59822710.html"
+    },
+    {
+      "id": "zp-53365774",
+      "num": 2617,
+      "direccion": "Vidal ",
+      "barrio": "Belgrano",
+      "tipo": "departamento",
+      "precio_usd": 1699.0,
+      "score_piso": 59.3,
+      "estado_declarado": null,
+      "m2_cubiertos": 110.0,
+      "m2_descubiertos": 110.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-53365774/01.jpg",
+        "fotos/zp-53365774/02.jpg",
+        "fotos/zp-53365774/03.jpg"
+      ],
+      "hash_fotos": "d8b4674119e1270f",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-dueno-directo-alquila-belgrano-4-ambientes-jardin-con-53365774.html"
+    },
+    {
+      "id": "zp-58399624",
+      "num": 2667,
+      "direccion": "Manzanares 4559 4º",
+      "barrio": "Saavedra",
+      "tipo": "departamento",
+      "precio_usd": 1765.0,
+      "score_piso": 57.8,
+      "estado_declarado": "cosmetico",
+      "m2_cubiertos": 89.0,
+      "m2_descubiertos": 86.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-58399624/01.jpg",
+        "fotos/zp-58399624/02.jpg",
+        "fotos/zp-58399624/03.jpg"
+      ],
+      "hash_fotos": "7e03c7dcf4b887bb",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-triplex-175-m-deck-2-terrazas-con-parrilla-58399624.html"
+    },
+    {
+      "id": "zp-59817477",
+      "num": 10,
+      "direccion": "Paroissien 4400",
+      "barrio": "Saavedra",
+      "tipo": "casa",
+      "precio_usd": 2000.0,
+      "score_piso": 56.5,
+      "estado_declarado": "reciclado",
+      "m2_cubiertos": 103.0,
+      "m2_descubiertos": 20.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59817477/01.jpg",
+        "fotos/zp-59817477/02.jpg",
+        "fotos/zp-59817477/03.jpg"
+      ],
+      "hash_fotos": "989bef516dbc5d82",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclcain-casa-lote-propio-4-ambientes-saavedra-refaccionada-59817477.html"
+    },
+    {
+      "id": "zp-59456892",
+      "num": 447,
+      "direccion": "Rivera al 4600",
+      "barrio": "Villa Urquiza",
+      "tipo": "ph",
+      "precio_usd": 1634.0,
+      "score_piso": 56.2,
+      "estado_declarado": null,
+      "m2_cubiertos": 132.0,
+      "m2_descubiertos": 95.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59456892/01.jpg",
+        "fotos/zp-59456892/02.jpg",
+        "fotos/zp-59456892/03.jpg"
+      ],
+      "hash_fotos": "1f86cd0425d39ade",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-5-ambientes-al-frente-con-garage-patio-y-terraza-59456892.html"
+    },
+    {
+      "id": "zp-59759297",
+      "num": 470,
+      "direccion": "Capdevila al 3200",
+      "barrio": "Villa Urquiza",
+      "tipo": "casa",
+      "precio_usd": 1268.0,
+      "score_piso": 55.5,
+      "estado_declarado": null,
+      "m2_cubiertos": 115.0,
+      "m2_descubiertos": 45.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59759297/01.jpg",
+        "fotos/zp-59759297/02.jpg",
+        "fotos/zp-59759297/03.jpg"
+      ],
+      "hash_fotos": "245561baeb5aaeac",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclcain-triplex-de-3-dorm.-en-alquiler-en-villa-urquiza-59759297.html"
+    },
+    {
+      "id": "zp-58314201",
+      "num": 67,
+      "direccion": "Juan Ramirez de Velasco al 1500",
+      "barrio": "Palermo",
+      "tipo": "ph",
+      "precio_usd": 980.0,
+      "score_piso": 55.4,
+      "estado_declarado": null,
+      "m2_cubiertos": 100.0,
+      "m2_descubiertos": 80.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-58314201/01.jpg",
+        "fotos/zp-58314201/02.jpg",
+        "fotos/zp-58314201/03.jpg",
+        "fotos/zp-58314201/04.jpg",
+        "fotos/zp-58314201/05.jpg",
+        "fotos/zp-58314201/06.jpg"
+      ],
+      "hash_fotos": "26b932390dc1b804",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-en-alquiler-unicamente-como-oficina-palermo-58314201.html"
+    },
+    {
+      "id": "zp-57442572",
+      "num": 2,
+      "direccion": "Avenida Álvarez Thomas 225",
+      "barrio": "Colegiales",
+      "tipo": "ph",
+      "precio_usd": 1476.0,
+      "score_piso": 55.1,
+      "estado_declarado": "a_estrenar",
+      "m2_cubiertos": 73.0,
+      "m2_descubiertos": 47.0,
+      "exterior_declarado_m2": 40,
+      "fotos": [
+        "fotos/zp-57442572/01.jpg",
+        "fotos/zp-57442572/02.jpg",
+        "fotos/zp-57442572/03.jpg"
+      ],
+      "hash_fotos": "87b3c6fd7fb13cf0",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphpa-ph-4-ambientes-muy-luminoso-y-con-terraza-57442572.html"
+    },
+    {
+      "id": "zp-59357110",
+      "num": 136,
+      "direccion": "Nicaragua al 4500",
+      "barrio": "Palermo Soho",
+      "tipo": "ph",
+      "precio_usd": 1830.0,
+      "score_piso": 53.5,
+      "estado_declarado": "cosmetico",
+      "m2_cubiertos": 95.0,
+      "m2_descubiertos": 75.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59357110/01.jpg",
+        "fotos/zp-59357110/02.jpg",
+        "fotos/zp-59357110/03.jpg",
+        "fotos/zp-59357110/04.jpg",
+        "fotos/zp-59357110/05.jpg",
+        "fotos/zp-59357110/06.jpg"
+      ],
+      "hash_fotos": "7f088197c1376a68",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-de-estilo-local-frente-plaza-con-terraza-no-59357110.html"
+    },
+    {
+      "id": "zp-59349262",
+      "num": 134,
+      "direccion": "Tronador al 500",
+      "barrio": "Villa Ortuzar",
+      "tipo": "casa",
+      "precio_usd": 1242.0,
+      "score_piso": 53.1,
+      "estado_declarado": null,
+      "m2_cubiertos": 72.0,
+      "m2_descubiertos": 29.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59349262/01.jpg",
+        "fotos/zp-59349262/02.jpg",
+        "fotos/zp-59349262/03.jpg"
+      ],
+      "hash_fotos": "687095ebebd25244",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclcain-casa-en-alquiler-3-ambientes-y-jardin.-villa-ortuzar-59349262.html"
+    },
+    {
+      "id": "zp-59367124",
+      "num": 1991,
+      "direccion": "AIZPURUA 3000. Entre Quesada y Congreso",
+      "barrio": "Villa Urquiza",
+      "tipo": "departamento",
+      "precio_usd": 1058.0,
+      "score_piso": 52.6,
+      "estado_declarado": "reciclado",
+      "m2_cubiertos": 61.0,
+      "m2_descubiertos": 56.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59367124/01.jpg",
+        "fotos/zp-59367124/02.jpg",
+        "fotos/zp-59367124/03.jpg"
+      ],
+      "hash_fotos": "c0b737fc9ca1d017",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-3-ambientes.-aizpurua-al-3000-59367124.html"
+    },
+    {
+      "id": "zp-50796869",
+      "num": 15,
+      "direccion": "Barzana 1055",
+      "barrio": "Villa Ortuzar",
+      "tipo": "ph",
+      "precio_usd": 1176.0,
+      "score_piso": 51.1,
+      "estado_declarado": null,
+      "m2_cubiertos": 70.0,
+      "m2_descubiertos": 30.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-50796869/01.jpg",
+        "fotos/zp-50796869/02.jpg",
+        "fotos/zp-50796869/03.jpg"
+      ],
+      "hash_fotos": "c93856d776dc9ad4",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-en-alquiler-6-dorm.-en-suite-2-cocinas-terraza-50796869.html"
+    }
+  ]
+}

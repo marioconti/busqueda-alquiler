@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "version": 1,
+    "por_que_archivo_aparte": "Juicio propio sobre las fotos, no dato scrapeado. Vive aparte para que un re-scrapeo no lo pise. build.py lo fusiona ANTES de puntuar.",
+    "origen": "sesion de Claude Code (sin API, sin costo)",
+    "actualizado": "2026-08-14"
+  },
+  "por_id": {
+    "zp-59773617": {
+      "estado_visual": null,
+      "decada_estimada_ultima_reforma": "construccion 60/70 con repintado reciente del exterior",
+      "cocina": null,
+      "banos": null,
+      "terraza_m2_estimados": null,
+      "terraza_utilizable": true,
+      "banderas_rojas": [
+        "seis fotos y NINGUNA del interior: ni cocina, ni bano, ni un ambiente",
+        "el aviso tampoco dice nada del estado; dos silencios apuntando al mismo lado",
+        "en el pasaje lateral hay paneles vidriados grandes tipo taller/galpon: revisar que uso tuvo"
+      ],
+      "confianza": "baja",
+      "hash_fotos": "3253bf957425d3eb",
+      "clasificado_el": "2026-08-14",
+      "origen": "sesion"
+    },
+    "zp-59817477": {
+      "estado_visual": "reciclado",
+      "decada_estimada_ultima_reforma": "2010s en cocina; el patio conserva lo original a proposito",
+      "cocina": "reformada de verdad: muebles hasta el techo, mesada de piedra, campana de acero, cocina industrial de 5 hornallas",
+      "banos": "no aparece",
+      "terraza_m2_estimados": null,
+      "terraza_utilizable": true,
+      "banderas_rojas": [
+        "esta habitada y amoblada en las fotos: confirmar que se entrega vacia (amoblado es filtro duro)",
+        "USD 2.000 es exactamente el techo, y las expensas no estan declaradas"
+      ],
+      "confianza": "alta",
+      "hash_fotos": "b172f0bb07aa2e93",
+      "clasificado_el": "2026-08-14",
+      "origen": "sesion"
+    },
+    "zp-59834788": {
+      "estado_visual": "bueno",
+      "decada_estimada_ultima_reforma": "2000s",
+      "cocina": "no aparece en ninguna foto",
+      "banos": "no aparece en ninguna foto",
+      "terraza_m2_estimados": null,
+      "terraza_utilizable": true,
+      "banderas_rojas": [
+        "hoy funciona como oficina o local: silla de oficina, dispenser de agua, cartel de seguridad, expositor",
+        "la terraza comparte lugar con los tanques de agua y la parrilla esta sin mantenimiento",
+        "ninguna foto de cocina ni de bano en un aviso de 121 m2"
+      ],
+      "confianza": "media",
+      "hash_fotos": "5e77c399b3feb973",
+      "clasificado_el": "2026-08-14",
+      "origen": "sesion"
+    }
+  }
+}

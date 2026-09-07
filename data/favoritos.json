@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "version": 1,
+    "generado": "2026-08-14",
+    "regla": "Los favoritos se revalidan TODOS LOS DIAS: sigue publicado, mismo precio. Un favorito que se cae y no me entero es el peor fallo posible del sistema.",
+    "estado_revalidacion": "NUNCA EJECUTADA. Los 12 vienen de la semilla y no se verificaron contra el portal en esta sesion."
+  },
+  "favoritos": [
+    {
+      "id": "zp-57442572",
+      "direccion": "Avenida Álvarez Thomas 225",
+      "agregado": "2026-08-14",
+      "nota": null,
+      "prioridad_visita": null,
+      "ultima_verificacion": "2026-09-06"
+    },
+    {
+      "id": "zp-59817477",
+      "direccion": "Paroissien 4400",
+      "agregado": "2026-08-14",
+      "nota": null,
+      "prioridad_visita": null,
+      "ultima_verificacion": "2026-09-06"
+    },
+    {
+      "id": "zp-60058314",
+      "direccion": "Calle Doctor Pedro I. Rivera 4927",
+      "agregado": "2026-09-06",
+      "nota": null,
+      "prioridad_visita": null,
+      "ultima_verificacion": "2026-09-06"
+    },
+    {
+      "id": "zp-60067871",
+      "direccion": "Estomba  al 2200",
+      "agregado": "2026-09-06",
+      "nota": null,
+      "prioridad_visita": null,
+      "ultima_verificacion": "2026-09-06"
+    },
+    {
+      "id": "ml-3854354478",
+      "direccion": "Sucre Al 2400",
+      "agregado": "2026-09-06",
+      "nota": null,
+      "prioridad_visita": null,
+      "ultima_verificacion": "2026-09-06"
+    }
+  ]
+}

@@ -1,0 +1,318 @@
+# config.yaml — criterios duros y pesos de score
+# Editable a mano. Los scripts lo leen con scripts/lib_config.py (parser de subset YAML, sin dependencias).
+# Nada de esto se cambia solo: cualquier propuesta de cambio se muestra como diff y espera confirmacion.
+
+version: 1
+fecha_ultima_edicion: 2026-08-25
+
+# ---------------------------------------------------------------------------
+# FILTROS DUROS
+# ---------------------------------------------------------------------------
+# CORREGIDO POR MARIO 2026-08-14. El perfil original (3 dormitorios, 90 m2 cubiertos)
+# venia del prompt de arranque y no era lo que realmente busca:
+#   "no me interesa tanto los metros cuadrados si algo medianamente grande, me interesa
+#    mas el tema de las habitaciones. minimo 2, 3 amb minimo, idealmente dos banos, o
+#    bano y toillet, cochera, jardin o terraza amplia"
+duros:
+  presupuesto_usd_max: 2000          # CONFIRMADO: es techo firme, alquiler + expensas
+  dormitorios_reales_min: 2          # era 3. Es el criterio que si le importa
+  ambientes_min: 3                   # nuevo: 3 ambientes minimo
+  m2_cubiertos_min: 60               # era 90. Ya NO es un criterio, solo un piso de
+                                     # sanidad para que no entre un monoambiente mal
+                                     # etiquetado. "Medianamente grande" lo resuelve el
+                                     # score, no el filtro.
+  amoblado_permitido: false
+  mascotas_requerido: true           # 'a_confirmar' pasa y se muestra marcado
+  usos_permitidos: [vivienda, ambos]
+  estados_rechazados: [a_refaccionar, cosmetico_severo]
+  expensas_usd_max: 200              # MARIO 2026-08-15: "expensas hasta 200".
+                                     # Solo filtra a los que las DECLARAN. El que no las
+                                     # declara pasa pero queda marcado: 88 de 109
+                                     # candidatos no las publican, y sacarlos a todos
+                                     # seria tirar el inventario por falta de dato ajena.
+
+# Tolerancia de la seccion "Al limite": falla UN solo duro por menos de este %
+# OJO: con 0.15 Alvarez Thomas 225 (73 m2 vs 90 = -18.9%) NO entra, y es el
+# ejemplo que el propio perfil da como caso que hay que ver. Ver CLAUDE.md > Contradicciones.
+al_limite:
+  tolerancia: 0.15
+  filtros_sin_tolerancia: [mascotas, amoblado, uso, zona, presupuesto]
+  # `presupuesto` ENTRO EL 2026-08-25. Mario: "casas q superan los 2k us no entran
+  # tampoco". Hasta hoy el tope de USD 2.000 admitia el 15% de tolerancia de esta
+  # seccion, asi que un aviso de USD 2.288 aparecia igual en "Al limite": eran 29 de
+  # los 65 al_limite de la lista corta, casi la mitad. Ya no. El resto de los duros
+  # numericos (m2, dormitorios, ambientes) SI siguen con tolerancia: ahi un 10% de
+  # menos es discutible, en el precio no.
+  max_duros_fallados: 1
+
+# ---------------------------------------------------------------------------
+# SCORE (0-100). El precio NO entra: ya filtra como duro.
+# ---------------------------------------------------------------------------
+# REBALANCE 2026-08-15. Mario sumo departamentos con terraza amplia y parrilla, edificios
+# nuevos sin portero, y bajo cochera a "opcional". Los pesos suman 100 SIEMPRE: lo que sube
+# uno lo baja otro. Lo que se movio y por que esta en cada linea.
+score:
+  exterior_m2:
+    peso: 25                         # sin cambio: sigue siendo lo que mas pesa
+    escala: [0, 10, 30, 60, 100]     # m2 -> 0, 25, 50, 75, 100 puntos
+    penalizacion_techado: 0.5        # quincho/galeria cerrada vale la mitad de m2
+  m2_cubiertos:
+    peso: 6                          # 10 -> 6. "no me interesa tanto los metros cuadrados"
+    escala: [60, 90, 120, 160]
+  estado:
+    peso: 18                         # 20 -> 18, para que el total siga dando 100
+    valores: {a_estrenar: 100, reciclado: 90, bueno: 65, cosmetico: 30, a_refaccionar: 0, null: 20}
+  tranquilidad:
+    peso: 14                         # 15 -> 14, misma razon
+    valores: {casa_lote_propio: 100, ph_entrada_indep: 80, edificio_chico: 55, torre: 20}
+    penalizacion_avenida: -25
+    penalizacion_frente: -10
+  banos:
+    peso: 12                         # era 10. "idealmente dos banos, o bano y toillet"
+    escala: [0.5, 1, 1.5, 2]         # un toilette suma medio bano: 1+toilette = 67 pts,
+                                     # 2 completos = 100. Es exactamente lo que pidio.
+  cochera:
+    peso: 4                          # 8 -> 4. Mario 2026-08-15: "cochera opcional"
+  expensas:
+    peso: 6                          # 5 -> 6: ahora tienen un techo declarado, pesan mas
+    valores: {sin_expensas: 100, bajas: 60, altas: 10}
+  parrilla_propia: 8                 # 3 -> 8. "terrazas amplias CON PARRILLA"
+  edificio_nuevo: 3                  # nuevo. "idealmente edificios nuevos"
+  sin_portero: 2                     # nuevo. Sin portero no hay sueldo en las expensas
+  orientacion_n_ne: 2                # una terraza al norte no es lo mismo que una al sur
+
+# Reglas por encima de la formula
+reglas_score:
+  cap_confianza_visual_baja: 70      # fotos poco confiables -> score tope 70 + asterisco
+  cap_sin_clasificar: 70             # aviso todavia no pasado por la API -> score parcial, tope 70
+  estado_null_puntua: 20             # el silencio del anunciante no es neutro
+  # Distincion importante:
+  #   estado = null            -> el aviso NO dice nada  -> penaliza (20)
+  #   estado = "sin_clasificar"-> nosotros no lo leimos  -> score parcial, no penaliza, cap 70
+
+# ---------------------------------------------------------------------------
+# ZONAS
+# ---------------------------------------------------------------------------
+zonas:
+  # Villa Urquiza y Coghlan agregados 2026-08-14 a pedido de Mario: mismo producto que
+  # Saavedra y Villa Ortuzar (casa o PH sobre lote propio, alquiler familiar a dos anos).
+  # ALMAGRO SACADO 2026-08-23 (confirmado por Mario). Venia del config inicial y nunca se
+  # habia revisado: esta pegado a Once, fuera del corredor Colegiales-Saavedra que es lo
+  # que Mario busca de verdad. La evidencia acompanaba antes de preguntarle: 337 avisos en
+  # base, 18 en la lista corta, CERO favoritos, y los 5 unicos eventos del barrio son los
+  # 5 descartes ("no me gusta", "cara para lo que es", "se ven poco mantenidos").
+  # La comparacion es por substring, asi que sacar "Almagro" tambien saca Almagro Norte
+  # (76 avisos) y Almagro Sur (25). Volver a ponerlo es agregar la palabra a esta lista.
+  #
+  # DOS LISTAS, Y HASTA EL 2026-08-24 ERA UNA SOLA HACIENDO DOS TRABAJOS.
+  #   `incluidas` = lo que se ACEPTA   (lo lee el duro `zona` en score.py)
+  #   `barrido`   = lo que se PIDE     (lo leen fetch / argenprop / mercadolibre)
+  # En CABA coinciden: se pide "saavedra" y vuelve Saavedra. En GBA NO: se pide el
+  # PARTIDO "san-isidro" y vuelven Martinez, Beccar, Acassuso y La Horqueta. Con una
+  # sola lista, o se piden 8 localidades sueltas (8 pedidos donde alcanza 1) o los
+  # avisos que vuelven fallan el duro de zona por no estar nombrados.
+  # RECORTADO 2026-08-25. Mario: "saca de las posibilidades accasuso villa adelina
+  # florida, etc, te dije nuñez, martinez, saavedra, hasta ahi ya tan para el oeste no".
+  # El 2026-08-24 se abrio GBA Norte por PARTIDO entero y entraron 12 localidades que el
+  # nunca nombro. El criterio que explica los tres casos que si nombro es uno solo:
+  # el corredor sobre el rio, y MARTINEZ ES EL LIMITE. Todo lo que esta mas lejos que
+  # Martinez (San Isidro centro, Beccar, Acassuso, La Horqueta) o tierra adentro
+  # (Florida, Munro, Villa Martelli, Carapachay, Boulogne, Villa Adelina, Santa Rita)
+  # sale. Medido antes de tocar: la lista corta pasa de 460 a 303, y los 157 que salen
+  # son San Isidro 32, Florida 27+6, Villa Adelina 18, Munro 16, Beccar 16, Boulogne 12,
+  # Carapachay 10, Acassuso 8, Villa Martelli 7, La Horqueta 3, Lomas de San Isidro 2.
+  # `barrido` NO cambia: se sigue pidiendo el partido san-isidro porque es de donde
+  # vuelve Martinez, que con 43 avisos es el segundo barrio de la lista corta. Pedir el
+  # partido y descartar lo que no se acepta no cuesta un pedido de mas.
+  #
+  # TERCER RECORTE DEL MISMO DIA, y este cierra el criterio: "martinez es lejos, vicente
+  # lopes y hasta nuñez llegamos". MARTINEZ SALE, VICENTE LOPEZ ENTRA.
+  #
+  # Recien aca la lista es geograficamente coherente, y vale la pena ver por que. El
+  # corredor, de CABA hacia afuera:
+  #     Nuñez | General Paz | VICENTE LOPEZ | Olivos | La Lucila | Martinez | Acassuso | San Isidro
+  # El limite quedo en el primer escalon despues de la General Paz. Las tres pasadas de
+  # hoy (fuera Acassuso/Florida/Villa Adelina -> fuera Olivos/La Lucila -> fuera Martinez)
+  # son la misma frontera moviendose hacia CABA, no tres criterios distintos.
+  #
+  # OJO CON EL NOMBRE: "Vicente Lopez" es PARTIDO y es LOCALIDAD. Aca es la LOCALIDAD,
+  # la que esta pegada a la General Paz enfrente de Nuñez y Saavedra. El partido incluye
+  # Olivos, Florida, Munro, La Lucila, Villa Martelli y Carapachay, que estan TODOS mas
+  # lejos y estan TODOS descartados. Es la misma palabra en `barrido` significando el
+  # partido y aca la localidad: pedimos el partido porque es la unica via, aceptamos la
+  # localidad porque es lo unico que se quiere.
+  incluidas: [Palermo, Belgrano, Colegiales, Nunez, Saavedra, Villa Ortuzar, Villa Urquiza, Coghlan, Vicente Lopez]
+  #
+  # Lo que se le pide a los portales. Los dos ultimos son PARTIDOS: medido el 2026-08-24,
+  # `vicente-lopez` devuelve Olivos/Florida/Munro/La Lucila/Villa Martelli y `san-isidro`
+  # devuelve Martinez/San Isidro/Beccar/La Horqueta. Dos pedidos cubren lo que con
+  # localidades sueltas costaria ocho, y ademas no se escapa ninguna localidad chica.
+  # `la-lucila` se PROBO SUELTO y devuelve CERO avisos: no va como slug propio (igual
+  # entra por Vicente Lopez). Una URL que no trae nada cuesta un pedido igual, todos los dias.
+  # ESTA LISTA SE DIO VUELTA DOS VECES EN UN DIA, y el motivo es siempre el mismo:
+  # `barrido` se justifica por lo que ACEPTA, no por lo que trae. A la manana `san-isidro`
+  # valia (traia Martinez) y `vicente-lopez` no rendia nada; a la tarde Martinez salio del
+  # perfil y se invirtio exacto. Un partido cuya cosecha util es CERO es gastar pedidos
+  # todos los dias para tirar el 100%.
+  #
+  # `vicente-lopez` es el unico pedido de GBA que queda. Rinde poco pero no cero: de los
+  # avisos del partido, 144 son de la localidad Vicente Lopez y 17 llegaron a la lista
+  # corta. El resto (Olivos, Florida, Munro, La Lucila, Villa Martelli, Carapachay) se
+  # descarta por zona. MEDIR ALGUN DIA si Zonaprop acepta el slug `vicente-lopez-vicente-lopez`
+  # o similar para la localidad sola: con 8 paginas por pedido, hoy ~6 de cada 7 avisos
+  # que bajamos de ahi son de localidades que no queremos, asi que la cobertura REAL de
+  # Vicente Lopez es una fraccion de esas 8 paginas.
+  barrido: [Palermo, Belgrano, Colegiales, Nunez, Saavedra, Villa Ortuzar, Villa Urquiza, Coghlan, Vicente Lopez]
+  # Las Canitas se publica COMO Belgrano y COMO Palermo, asi que filtrar por el campo
+  # barrio no alcanza: hay que mirar tambien el texto del aviso. Verificado en la primera
+  # corrida grande: se colaron 4 avisos de Las Canitas por el campo barrio de Belgrano.
+  # "El Talar de Martinez" es partido de TIGRE. Se dejo aunque Martinez ya no este en
+  # `incluidas`: si algun dia vuelve, el substring lo colaria otra vez.
+  excluidas: [Chacarita, Las Canitas, Las Cañitas, El Talar]
+  excluidas_por_texto: ["las canitas", "las cañitas", "chacarita"]
+
+# ---------------------------------------------------------------------------
+# TIPOS
+# ---------------------------------------------------------------------------
+# MARIO 2026-08-15: "veo mucho casa y ph y poco depto con lo que te dije, mismas
+# especificaciones pero con terrazas amplias con parrilla". El departamento deja de estar
+# penalizado. La exigencia de terraza propia NO se saca: es exactamente lo que pidio.
+tipos:
+  prioridad: {casa: 1.0, ph: 1.0, departamento: 1.0}   # era 0.4
+  departamento_requiere_terraza_propia_declarada: true
+  departamento_exterior_min_m2: 15   # MEDIDO 2026-08-15 sobre 826 departamentos: la MEDIANA
+                                     # de exterior es 2 m2 y el percentil 75 es 4. Eso es un
+                                     # balcon, y el perfil dice "un balcon no alcanza". Con
+                                     # 15 quedan 9 departamentos que ademas cumplen 2 dorm y
+                                     # 3 amb; con 20 quedan 7 y con 10 quedan 11. Es un
+                                     # renglon: moverlo es cambiar un numero.
+
+# ---------------------------------------------------------------------------
+# PORTALES
+# ---------------------------------------------------------------------------
+# Sondeados el 2026-08-14: un pedido a cada uno, leyendo robots.txt primero. Los cuatro
+# permiten la busqueda para User-agent *; los `Disallow: /` que se ven en sus robots son
+# de bloques para otros bots (Semrush, Ahrefs), no para nosotros.
+portales:
+  zonaprop:   {activo: true,  prioridad: 1}
+  argenprop:  {activo: true,  prioridad: 1, paginas: 1}   # 20 avisos/pagina, HTML plano.
+                                   # paginas=1 hasta verificar el formato de paginado: Saavedra
+                                   # entero son 20 avisos (una sola pagina) asi que el HTML
+                                   # guardado no trae links de paginado para copiar.
+                                   # Los datos duros viajan como atributos del <a class="card">,
+                                   # no en prosa. Es donde publican las inmobiliarias chicas.
+  mercadolibre: {activo: true, prioridad: 2, max_requests: 24}
+                                   # PRENDIDO 2026-08-23 a pedido de Mario. La medicion que
+                                   # lo tenia apagado ("casas+Saavedra = 11 resultados") era
+                                   # el peor caso posible: el barrio mas chico y el tipo que
+                                   # ML casi no publica, medido ademas ANTES de que los
+                                   # departamentos entraran al perfil. Sobre departamentos y
+                                   # el corredor norte son 1.109 avisos.
+                                   # robots.txt PROHIBE paginar (_Desde_), ordenar (_OrderId_)
+                                   # y filtrar por precio (_PriceRange_): de cada busqueda se
+                                   # ve UNA pagina de 48. Por eso el barrido pide consultas
+                                   # angostas en vez de paginas. Detalle en mercadolibre.py.
+  # Zonas propias del portal: Mario 2026-08-23, "no pondria Palermo, ni Almagro, seria mas
+  # de Colegiales hasta Saavedra". Es el corredor norte y nada mas; el resto de la busqueda
+  # (zonas.incluidas) NO cambia, esto aplica solo a MercadoLibre.
+  #
+  # OJO AL AGREGAR UNA ZONA A `zonas.barrido`: esta lista es INDEPENDIENTE y hay que
+  # tocarla tambien. El 2026-08-24 entraron Vicente Lopez y San Isidro a la busqueda y
+  # esta lista quedo sin ellos: los 288 avisos de GBA que trajo ML ese dia entraron solo
+  # porque se los forzo con --solo-zonas, y una corrida normal no los habria pedido nunca.
+  # Existe separada a proposito (Mario no quiere Palermo ni Almagro aca), pero eso la hace
+  # facil de olvidar. 9 zonas x 3 rutas = 27 pedidos, que es el max_requests de arriba.
+  mercadolibre_zonas: [Colegiales, Villa Ortuzar, Villa Urquiza, Coghlan, Saavedra, Nunez, Belgrano, Vicente Lopez]
+  # Sigue el vaiven de `zonas.barrido`: salio Vicente Lopez a la manana y volvio a la
+  # tarde en lugar de San Isidro. 8 zonas x 3 rutas = 24, que es el max_requests.
+  remax:      {activo: false, prioridad: 3}     # SPA contra API propia, y su stock ya va a Zonaprop
+  properati:  {activo: false, prioridad: 3}     # MISMO grupo que Zonaprop -> inventario duplicado
+  inmobusqueda: {activo: false, prioridad: 3}
+
+# ---------------------------------------------------------------------------
+# BARRIDO DE LISTADOS
+# ---------------------------------------------------------------------------
+busqueda:
+  # 'casa' EN SINGULAR incluye PH; el plural no.
+  #
+  # El tag '+con-terraza' se PROBO Y SE DESCARTO el 2026-08-15: la URL
+  # "departamentos-alquiler-con-terraza-<barrio>" devuelve 200 con 1501 paginas y IGNORA el
+  # barrio — trajo departamentos de Montevideo, Pocitos, Punta Carretas y Mar del Plata.
+  # La terraza se filtra por nuestro lado con m2_totales - m2_cubiertos, que ademas es un
+  # numero real y no un tag que el anunciante marca a dedo.
+  tipos_slug: [casa, departamentos]
+  max_paginas_por_barrio: 8        # 30 avisos por pagina -> hasta 240 por barrio y slot.
+                                   # Era 12; con 90 pedidos de techo, 8 reparte mejor entre
+                                   # barrios en vez de gastarlos todos en Palermo.
+
+  # DOS PASADAS (2026-08-21). Antes habia una sola, `-orden-precio-ascendente`, y por eso
+  # el sistema traia todos los dias el mismo conjunto: las N paginas mas baratas de cada
+  # barrio son las mismas hoy que ayer. Un aviso nuevo entra en el MEDIO de esa lista.
+  paginas_novedades: 2             # `-orden-publicado-descendente`: lo recien publicado
+                                   # esta arriba por definicion. 2 paginas = 60 avisos por
+                                   # barrio y tipo, mas de lo que se publica en un dia.
+  slots_ambientes: [3-ambientes, 4-ambientes, mas-de-5-ambientes]
+                                   # PROBADOS UNO POR UNO EL 2026-08-21. Estos filtran de
+                                   # verdad: Palermo pasa de 3.185 avisos (107 paginas) a
+                                   # 599 (20) con `-3-ambientes`, y ahi el universo que
+                                   # importa se cubre ENTERO.
+                                   # NO usar `-mas-de-2-ambientes`: es ">=2" y trae avisos
+                                   # de 2 ambientes. NO usar `-menos-de-2000-dolares`: no
+                                   # filtra nada (Saavedra devolvio 158 de 158 y el primero
+                                   # era de USD 8.000).
+  max_requests_por_corrida: 90     # MEDIDO CONTRA EL PORTAL, no elegido a ojo: el
+                                   # 2026-08-21 Zonaprop contesto 403 en el pedido ~100 de
+                                   # la corrida (sin ningun bug nuestro: volumen legitimo
+                                   # con pausa de 2-3 s). 90 deja margen abajo de ese piso.
+                                   # Las fichas de detalle.py suman aparte, asi que el
+                                   # total real de la corrida es mayor.
+                                   # Si el presupuesto corta, la corrida avisa y la del dia
+                                   # siguiente sigue por otros barrios (ver la rotacion en
+                                   # fetch.plan_de_barrido).
+
+fotos:
+  fichas_por_corrida: 15           # cuantas fichas nuevas se abren por dia, ademas de los
+                                   # favoritos (que se revalidan SIEMPRE). El listado ya
+                                   # trae casi todo; la ficha solo agrega fotos locales.
+  max_por_aviso: 3                 # decision de Mario 2026-08-14: "una foto o 3 esta bien,
+                                   # de ultima si me interesa entro al link". NO son las 3
+                                   # primeras: detalle.repartir() toma primera, del medio y
+                                   # ultima, porque el anunciante pone adelante las lindas.
+  variante: url730x532             # tamano del CDN: alcanza para card y carrusel
+  # Solo se bajan fotos de avisos que pasan los duros o estan marcados a mano. Bajar 6
+  # fotos de 200 avisos por dia serian 1200 imagenes diarias y no sirven para nada.
+
+rate_limit:
+  pausa_segundos_min: 3            # era 2-3. Subido el 2026-08-21 despues del 403: el
+  pausa_segundos_max: 5            # barrido nuevo pide mas paginas y hay que ir mas lento.
+  corridas_por_dia_max: 2
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
+
+# ---------------------------------------------------------------------------
+# CLASIFICACION CON LA API (scripts/clasificar.py)
+# Requiere `pip install anthropic` (PENDIENTE DE AUTORIZACION) y ANTHROPIC_API_KEY.
+# ---------------------------------------------------------------------------
+api:
+  modelo_texto: claude-opus-5      # el filtro barato corre sobre TODO el universo
+  modelo_fotos: claude-opus-5      # el visual corre solo sobre los que pasan los duros
+  effort_texto: low                # extraccion estructurada: no necesita razonar hondo
+  effort_fotos: medium             # estimar terraza y estado real si lo necesita
+  max_tokens: 16000
+  fotos_por_aviso: 4
+  # Costo (lista publica, USD por millon de tokens):
+  #   claude-opus-5    5 / 25      claude-sonnet-5   3 / 15      claude-haiku-4-5  1 / 5
+  # Con ~200 avisos/dia el paso de texto es el volumen y el de fotos es el costo real
+  # (cada imagen suma tokens). Si la factura molesta, el primer cambio a discutir es
+  # bajar SOLO el paso de texto a un modelo mas barato y dejar las fotos en opus.
+  # No se cambia sin decision de Mario.
+
+# ---------------------------------------------------------------------------
+# SANIDAD DE DATOS
+# ---------------------------------------------------------------------------
+basura:
+  textos_descarte: ["ficticia", "ficticias", "de prueba", "tokko broker", "no contactar"]
+  m2_totales_max: 2000
+
+reglas_reaparicion:
+  baja_precio_min_pct: 0.15          # un descartado vuelve a mostrarse si bajo >15%
+  dias_verificar_vigencia: 60
