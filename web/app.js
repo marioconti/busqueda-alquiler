@@ -61,9 +61,20 @@
            Number((D.meta_avisos || {}).cotizacion_bna_venta || 0) || null;
   }
 
-  var CON_SERVIDOR = location.protocol === "http:" || location.protocol === "https:";
+  /* EL MODO SE DECIDE POR EL HOST, NO POR EL PROTOCOLO.
+     Estaba en `protocol === "http:" || "https:"`, y mientras la pagina solo se abria
+     con abrir.bat o con doble click eso alcanzaba: http era el servidor, file era el
+     disco. Publicada en GitHub Pages deja de alcanzar y falla del peor modo posible:
+     Pages es https, asi que la pagina creeria que hay servidor, mandaria cada descarte
+     a /api/evento, recibiria un 404 y la decision se perderia. En un proyecto cuya
+     unica regla es "lo peor es mostrar dos veces algo ya descartado", perder descartes
+     en silencio es el fallo mas caro que puede tener.
+     Solo el servidor local escribe en data/eventos.jsonl, y ese solo vive en localhost. */
+  var CON_SERVIDOR = /^(localhost|127\.0\.0\.1|\[::1\]|::1)$/.test(location.hostname);
 
   function enviarEvento(ev) {
+    /* Si el servidor contesta cualquier cosa que no sea ok, la decision NO se descarta:
+       se degrada a modo archivo y se guarda local. Un descarte perdido no se recupera. */
     return fetch("/api/evento", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

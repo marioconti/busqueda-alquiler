@@ -1,5 +1,5 @@
 {
-  "generado": "2026-09-06",
+  "generado": "2026-09-07",
   "como_completar": "Para cada item: mirar las fotos de 'fotos' y agregar el objeto 'visual' con las claves de ESQUEMA_FOTOS (estado_visual, decada_estimada_ultima_reforma, cocina, banos, terraza_m2_estimados, terraza_utilizable, banderas_rojas, confianza). Guardar y correr: python scripts/clasificar.py aplicar <archivo>",
   "criterio": "Sos un arquitecto mirando las fotos de un aviso de alquiler.\n\nEl paso de fotos existe para hacer dos cosas que el texto no puede: (a) determinar el\nestado REAL, no el declarado, y (b) estimar la superficie de terraza cuando el aviso no\nla declara. Son las dos que mas pesan en la decision.\n\n- estado_visual: lo que ves, no lo que el aviso dice. Buscá humedad, revoque flojo,\n  carpinteria vieja, instalacion a la vista, pisos originales sin reformar, banos y\n  cocinas de decada anterior.\n- decada_estimada_ultima_reforma: aproximada, en base a griferia, azulejos, mesadas,\n  aberturas. Un jacuzzi delata un reciclado de los 2000.\n- terraza_m2_estimados: estimala comparando contra objetos de escala conocida (baldosas,\n  una silla, una mesa, una parrilla). Si no hay foto de exterior, null.\n- terraza_utilizable: false si esta sin impermeabilizar, si tiene tanques de agua,\n  tendederos fijos, maquinas de aire acondicionado o esta ocupada por instalaciones.\n  Una terraza que no se puede caminar y llenar de plantas no sirve.\n- banderas_rojas: problemas constructivos concretos y visibles.\n- confianza: \"baja\" si hay pocas fotos, si son borrosas, si no muestran los ambientes\n  principales, o si el aviso declaro que las imagenes fueron generadas con IA.\n\nNo inventes lo que no se ve en las fotos.",
   "items": [
@@ -104,26 +104,6 @@
       "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-5-ambientes-al-frente-con-garage-patio-y-terraza-59456892.html"
     },
     {
-      "id": "zp-59759297",
-      "num": 470,
-      "direccion": "Capdevila al 3200",
-      "barrio": "Villa Urquiza",
-      "tipo": "casa",
-      "precio_usd": 1268.0,
-      "score_piso": 55.5,
-      "estado_declarado": null,
-      "m2_cubiertos": 115.0,
-      "m2_descubiertos": 45.0,
-      "exterior_declarado_m2": null,
-      "fotos": [
-        "fotos/zp-59759297/01.jpg",
-        "fotos/zp-59759297/02.jpg",
-        "fotos/zp-59759297/03.jpg"
-      ],
-      "hash_fotos": "245561baeb5aaeac",
-      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclcain-triplex-de-3-dorm.-en-alquiler-en-villa-urquiza-59759297.html"
-    },
-    {
       "id": "zp-58314201",
       "num": 67,
       "direccion": "Juan Ramirez de Velasco al 1500",
@@ -190,26 +170,6 @@
       "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-de-estilo-local-frente-plaza-con-terraza-no-59357110.html"
     },
     {
-      "id": "zp-59349262",
-      "num": 134,
-      "direccion": "Tronador al 500",
-      "barrio": "Villa Ortuzar",
-      "tipo": "casa",
-      "precio_usd": 1242.0,
-      "score_piso": 53.1,
-      "estado_declarado": null,
-      "m2_cubiertos": 72.0,
-      "m2_descubiertos": 29.0,
-      "exterior_declarado_m2": null,
-      "fotos": [
-        "fotos/zp-59349262/01.jpg",
-        "fotos/zp-59349262/02.jpg",
-        "fotos/zp-59349262/03.jpg"
-      ],
-      "hash_fotos": "687095ebebd25244",
-      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclcain-casa-en-alquiler-3-ambientes-y-jardin.-villa-ortuzar-59349262.html"
-    },
-    {
       "id": "zp-59367124",
       "num": 1991,
       "direccion": "AIZPURUA 3000. Entre Quesada y Congreso",
@@ -248,6 +208,46 @@
       ],
       "hash_fotos": "c93856d776dc9ad4",
       "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-en-alquiler-6-dorm.-en-suite-2-cocinas-terraza-50796869.html"
+    },
+    {
+      "id": "zp-59549742",
+      "num": 454,
+      "direccion": "Doctor Emir Mercader 4567",
+      "barrio": "Villa Urquiza",
+      "tipo": "ph",
+      "precio_usd": 1350.0,
+      "score_piso": 50.2,
+      "estado_declarado": null,
+      "m2_cubiertos": 135.0,
+      "m2_descubiertos": 50.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-59549742/01.jpg",
+        "fotos/zp-59549742/02.jpg",
+        "fotos/zp-59549742/03.jpg"
+      ],
+      "hash_fotos": "b730218f23fbf4fd",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-ph-de-185-m-sup2--con-2-habitaciones-en-alquiler-en-59549742.html"
+    },
+    {
+      "id": "zp-57882007",
+      "num": 56,
+      "direccion": "Gorriti  al 4800",
+      "barrio": "Palermo Soho",
+      "tipo": "ph",
+      "precio_usd": 1634.0,
+      "score_piso": 48.6,
+      "estado_declarado": null,
+      "m2_cubiertos": 130.0,
+      "m2_descubiertos": 60.0,
+      "exterior_declarado_m2": null,
+      "fotos": [
+        "fotos/zp-57882007/01.jpg",
+        "fotos/zp-57882007/02.jpg",
+        "fotos/zp-57882007/03.jpg"
+      ],
+      "hash_fotos": "4fb3dc7237e75f3a",
+      "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclphin-planta-alta-5-amb.-ent.-indep.-terraza-palermo-soho-57882007.html"
     }
   ]
 }

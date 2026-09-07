@@ -17,6 +17,14 @@ duros:
   presupuesto_usd_max: 2000          # CONFIRMADO: es techo firme, alquiler + expensas
   dormitorios_reales_min: 2          # era 3. Es el criterio que si le importa
   ambientes_min: 3                   # nuevo: 3 ambientes minimo
+  banos_min: 1.5                     # MARIO 2026-09-07: "no quiero ... con un solo bano".
+                                     # Un toilette cuenta medio, asi que 1.5 = un bano
+                                     # completo mas un toilette, que es como el perfil lo
+                                     # viene diciendo. Con 2 exigiria dos banos completos.
+  tipos_permitidos: [departamento, ph]   # MARIO 2026-09-07: "ni casas ... Juan no quiere
+                                     # irse a casas". Medido antes de aplicar: la lista
+                                     # corta pasa de 464 a 307 sacando casas, y a 165
+                                     # sumando el minimo de banos.
   m2_cubiertos_min: 60               # era 90. Ya NO es un criterio, solo un piso de
                                      # sanidad para que no entre un monoambiente mal
                                      # etiquetado. "Medianamente grande" lo resuelve el
@@ -36,7 +44,7 @@ duros:
 # ejemplo que el propio perfil da como caso que hay que ver. Ver CLAUDE.md > Contradicciones.
 al_limite:
   tolerancia: 0.15
-  filtros_sin_tolerancia: [mascotas, amoblado, uso, zona, presupuesto]
+  filtros_sin_tolerancia: [mascotas, amoblado, uso, zona, presupuesto, tipo]
   # `presupuesto` ENTRO EL 2026-08-25. Mario: "casas q superan los 2k us no entran
   # tampoco". Hasta hoy el tope de USD 2.000 admitia el 15% de tolerancia de esta
   # seccion, asi que un aviso de USD 2.288 aparecia igual en "Al limite": eran 29 de
@@ -94,6 +102,11 @@ reglas_score:
 # ZONAS
 # ---------------------------------------------------------------------------
 zonas:
+  # PALERMO SACADO 2026-09-07. Mario, por audio: "estamos mas para zonas como a partir de
+  # Belgrano para arriba, partes mas tranquilas, Villa Ortuzar, Villa Urquiza, Nunez,
+  # Saavedra, Belgrano, y un poco mas para el norte". Palermo queda al SUR de Belgrano y
+  # no lo nombro. Ya lo habia dicho el 2026-08-23 ("no pondria Palermo, ni Almagro") y
+  # solo se habia sacado Almagro. Eran 16 avisos de la lista corta.
   # Villa Urquiza y Coghlan agregados 2026-08-14 a pedido de Mario: mismo producto que
   # Saavedra y Villa Ortuzar (casa o PH sobre lote propio, alquiler familiar a dos anos).
   # ALMAGRO SACADO 2026-08-23 (confirmado por Mario). Venia del config inicial y nunca se
@@ -141,7 +154,7 @@ zonas:
   # lejos y estan TODOS descartados. Es la misma palabra en `barrido` significando el
   # partido y aca la localidad: pedimos el partido porque es la unica via, aceptamos la
   # localidad porque es lo unico que se quiere.
-  incluidas: [Palermo, Belgrano, Colegiales, Nunez, Saavedra, Villa Ortuzar, Villa Urquiza, Coghlan, Vicente Lopez]
+  incluidas: [Belgrano, Colegiales, Nunez, Saavedra, Villa Ortuzar, Villa Urquiza, Coghlan, Vicente Lopez]
   #
   # Lo que se le pide a los portales. Los dos ultimos son PARTIDOS: medido el 2026-08-24,
   # `vicente-lopez` devuelve Olivos/Florida/Munro/La Lucila/Villa Martelli y `san-isidro`

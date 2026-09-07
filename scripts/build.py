@@ -95,6 +95,47 @@ def _refrescar_dias_publicado(avisos: list[dict]) -> None:
         a["publicado_hace_dias"] = (hoy - date(y, m, d)).days
 
 
+# ---------------------------------------------------------------------------
+# QUE VIAJA AL NAVEGADOR
+# ---------------------------------------------------------------------------
+# El archivo llego a pesar 45 MB y en un telefono no abria. Tres cosas lo explicaban,
+# y ninguna era que hubiera demasiados avisos:
+#
+#   1. `indent=1`. Un espacio por linea sobre millones de lineas son 7 MB de sangria.
+#   2. Campos que la pagina NO LEE. `descripcion` sola son 1.145 bytes por aviso
+#      —7,3 MB— y no aparece una sola vez en app.js. Se scrapea porque las reglas de
+#      vocabulario la necesitan, pero eso corre aca, no en el navegador.
+#   3. Los 6.271 `filtrados` viajaban enteros. Solo se ven detras del flag
+#      "ver fuera de filtro", y ahi alcanza con la ficha minima.
+#
+# Medido: 45,4 MB -> 11,3 MB. Si una vista nueva necesita un campo de esta lista, se
+# saca de aca; el criterio es "lo lee app.js", no "lo tenemos guardado".
+
+_SIN_USO_EN_LA_PAGINA = (
+    "descripcion", "senales_reforma", "senales_antiguedad",
+    "titulo_generado", "confianza_texto", "fuente_datos",
+)
+
+# Lo unico que necesita una ficha que solo se ve en "fuera de filtro".
+_MINIMO_FILTRADOS = (
+    "id", "num", "titulo", "direccion", "direccion_norm", "barrio", "tipo",
+    "precio_total_usd", "m2_totales", "m2_cubiertos", "dormitorios_reales",
+    "banos_completos", "toilettes", "seccion", "score", "url", "fotos_remotas",
+    "estado_aviso", "portal", "first_seen", "duros", "decision",
+)
+
+
+def _aligerar(avisos):
+    """Deja viajar solo lo que la pagina dibuja."""
+    salida = []
+    for a in avisos:
+        if a.get("seccion") == "filtrados":
+            salida.append({k: a[k] for k in _MINIMO_FILTRADOS if k in a})
+        else:
+            salida.append({k: v for k, v in a.items() if k not in _SIN_USO_EN_LA_PAGINA})
+    return salida
+
+
 def build() -> dict:
     cfg = load_config()
     doc_avisos = leer_json(DIR_DATA / "avisos.json")
@@ -124,6 +165,8 @@ def build() -> dict:
 
     avisos.sort(key=clave_orden_default)
 
+    avisos = _aligerar(avisos)
+
     payload = {
         "generado": date.today().isoformat(),
         "eventos": eventos.leer()[-300:],
@@ -141,7 +184,8 @@ def build() -> dict:
     salida = DIR_WEB / "data.js"
     salida.write_text(
         "// GENERADO POR scripts/build.py - NO EDITAR A MANO\n"
-        "window.DATOS = " + json.dumps(payload, ensure_ascii=False, indent=1) + ";\n",
+        "window.DATOS = " + json.dumps(payload, ensure_ascii=False,
+                                       separators=(",", ":")) + ";\n",
         encoding="utf-8",
     )
     return payload["resumen"]

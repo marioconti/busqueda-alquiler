@@ -12,8 +12,8 @@ web/fotos/
 # Capturas de trabajo.
 web/_vista-*.png
 
-# El data.js completo pesa 54 MB y no abre en un telefono. Se publica el liviano.
-web/data.js
+# web/data.js SI se versiona: es lo unico que hace andar la pagina publicada, y desde
+# que build.py deja pasar solo lo que app.js dibuja pesa 11 MB en vez de 52.
 
 __pycache__/
 *.pyc

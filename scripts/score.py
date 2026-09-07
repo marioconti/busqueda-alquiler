@@ -325,6 +325,27 @@ def evaluar_duros(aviso: dict, cfg: dict) -> dict:
                  None if amb is None else (mina - amb) / mina,
                  f"{amb} amb vs minimo {mina:.0f}" if amb is not None else "sin dato")
 
+    # BANOS. Mario 2026-09-07: "no quiero departamento de dos ambientes, con un solo
+    # bano ni casas". El dato NO vive en `banos` —ese campo esta vacio en el 100% de los
+    # avisos— sino en `banos_completos` + `toilettes`, y un toilette cuenta medio, que es
+    # como el perfil lo viene diciendo desde el principio ("dos banos, o bano y toilette").
+    # Leerlo del campo equivocado dejaba la lista corta en cero sin un solo error.
+    bmin = float(d.get("banos_min") or 0)
+    if bmin:
+        bc = aviso.get("banos_completos")
+        tl = aviso.get("toilettes") or 0
+        tot = None if bc is None else bc + 0.5 * tl
+        chequear("banos", None if tot is None else tot >= bmin,
+                 None if tot is None else (bmin - tot) / bmin,
+                 f"{bc} banos + {tl} toilette vs minimo {bmin:g}" if tot is not None else "sin dato")
+
+    # TIPO. Mismo pedido: "casas no, Juan no quiere irse a casas". Es un binario, no
+    # admite tolerancia: una casa no es una casa por poco.
+    permitidos = d.get("tipos_permitidos")
+    if permitidos:
+        tp = (aviso.get("tipo") or "").lower()
+        chequear("tipo", None if not tp else tp in permitidos, None, tp or "sin dato")
+
     m2, minm = aviso.get("m2_cubiertos"), float(d["m2_cubiertos_min"])
     chequear("m2_cubiertos", None if m2 is None else m2 >= minm,
              None if m2 is None else (minm - m2) / minm,
