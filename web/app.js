@@ -1674,9 +1674,13 @@
       banda.hidden = false;
       banda.className = "banda alerta";
       banda.innerHTML =
-        "<b>Modo archivo.</b> <span>Abriste <code>index.html</code> directo, asi que lo que marques " +
-        "queda <b>solo en este navegador</b> y no se escribe en el disco. Para que se guarde solo: " +
-        "cerra esto y hace doble click en <code>abrir.bat</code>.</span>";
+        (location.hostname.indexOf("github.io") >= 0
+          ? "<b>Solo lectura.</b> <span>Esta es la copia publicada: se actualiza cuando la " +
+            "busqueda corre en la compu. Lo que marques desde aca queda <b>solo en este " +
+            "telefono</b> y no lo ve nadie mas todavia.</span>"
+          : "<b>Modo archivo.</b> <span>Abriste <code>index.html</code> directo, asi que lo que " +
+            "marques queda <b>solo en este navegador</b> y no se escribe en el disco. Para que se " +
+            "guarde solo: cerra esto y hace doble click en <code>abrir.bat</code>.</span>");
       return;
     }
 
