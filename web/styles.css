@@ -1482,3 +1482,363 @@ table.ficha td:last-child { font-family: var(--mono); font-size: 12.5px; }
 }
 .card-portal.p-mercadolibre { color: var(--ambar); background: var(--ambar-suave); border-color: #e8d6ae; }
 .card-portal.p-argenprop    { color: var(--rojo);  background: var(--rojo-suave);  border-color: #efcfcc; }
+
+/* ==========================================================================
+   EL TELEFONO
+   ==========================================================================
+
+   Esta pagina se escribio para un monitor y se publico sin mirarla en un
+   telefono. Medido a 390 px: el documento medía 768 —casi el doble de la
+   pantalla, con scroll horizontal— porque la barra superior mete marca, cinco
+   pestanas, filtros, cotizacion y exportar en una sola fila. Dos de las cinco
+   vistas no se veian. Y 34 de 45 controles median menos de 40 px, que es el
+   minimo para acertarle con el dedo.
+
+   EL CORTE ESTA EN 860 px Y NO ES REDONDO A PROPOSITO: es lo que mide la barra
+   superior de escritorio con sus margenes. Estuvo en 720 y a 721 px el layout de
+   escritorio entraba antes de que la barra entrara, asi que el documento medía 768
+   sobre una ventana de 721 y volvia el scroll horizontal. El breakpoint tiene que
+   estar donde el contenido deja de caber, no en el ancho de ningun telefono.
+
+   Tres decisiones, y ninguna es cosmetica:
+
+   1. LAS VISTAS BAJAN AL PULGAR. Sosteniendo el telefono con una mano, la
+      mitad inferior es la unica que el pulgar alcanza sin cambiar el agarre.
+      Esta es una app de decidir con el pulgar: mirar foto, corazon o descarte.
+   2. ARRIBA QUEDA LO MINIMO. El nombre de la vista y nada mas. La marca, la
+      cotizacion y exportar no se usan mientras se decide.
+   3. UNA COLUMNA Y LA FOTO A SANGRE. La grilla pedia 304 px de columna, que en
+      una pantalla de 390 con margenes no entra: dejaba la card recortada.
+
+   ========================================================================== */
+
+.tabbar { display: none; }
+.menu-mas { display: none; }
+
+@media (max-width: 860px) {
+
+  /* ---------------------------------------------------------- barra de arriba */
+
+  /* La barra flotaba con margenes y esquinas redondeadas, que en un monitor la
+     hace parecer un papel sobre la mesa. En 390 px esos margenes son ancho que
+     no sobra: acá va pegada al borde y ocupa el alto de una linea. */
+  .barra {
+    top: 0;
+    border-radius: 0;
+    margin: 0 -12px;
+    padding: 8px 12px;
+  }
+
+  .barra-fila { gap: 8px; }
+
+  /* Las pestanas se fueron abajo. Dejarlas aca era la fila de 768 px. */
+  .tabs { display: none; }
+
+  /* La cotizacion, exportar y filtros viven en el menu "Mas": no se tocan mientras
+     se decide, y entre los tres costaban una fila entera. El indicador de guardado
+     tambien sale: lo que hay que saber de eso ya lo dice la banda de arriba. */
+  .barra .cotiz,
+  .barra #btn-exportar,
+  .barra #btn-filtros,
+  .barra .estado-guardado { display: none; }
+
+  /* Con eso la barra baja a UNA fila: solo el nombre. Eran 110 px de controles
+     antes de la primera propiedad. */
+  .barra-fila { flex-wrap: nowrap; }
+  .grupo-der { display: none; }
+
+  /* LA BANDA SE PLIEGA. Dice dos cosas que hay que saber una vez —cuando fue la
+     ultima busqueda y por que hay dos numeros por propiedad— y las repetia enteras
+     cada vez que se abria la pagina, ocupando media pantalla antes de la primera
+     foto. Plegada deja ver el primer renglon y se abre tocandola. */
+  .banda {
+    max-height: 3.1em;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .banda.abierta { max-height: none; }
+
+  .banda:not(.abierta)::after {
+    content: "toca para leer";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 0 10px 2px 26px;
+    font-size: 11px;
+    color: var(--acento);
+    background: linear-gradient(90deg, transparent, var(--ambar-suave) 30%);
+  }
+
+  .marca-nombre { font-size: 15px; }
+
+  /* -------------------------------------------------------------- contenido */
+
+  .hoja { padding: 12px; border-radius: 0; margin: 0 -12px; }
+
+  /* Una sola columna. `minmax(304px, 1fr)` sobre 366 px utiles entra por poco y
+     recorta; con 1fr la card se adapta y la foto llega a los dos bordes. */
+  .grilla,
+  .explorar { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Explorar existe para barrer fotos. En el telefono no hay mouse que barra,
+     asi que el tile deja de ser denso y muestra la foto grande. */
+  .explorar .tile-foto { aspect-ratio: 4 / 3; }
+
+  /* El panel de detalle entra desde abajo, no desde la derecha: es de donde
+     vienen las hojas en un telefono y es donde el pulgar la puede cerrar. */
+  .panel {
+    top: auto;
+    left: 0;
+    width: 100%;
+    height: 92dvh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  /* Los filtros ocupaban una grilla de escritorio. Aca son una hoja completa. */
+  .filtros { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .filtros .campo-doble,
+  .filtros .campo-ancho { grid-column: 1 / -1; }
+
+  /* --------------------------------------------------- el dedo necesita 44 px */
+
+  /* 34 de 45 controles median menos de 40. No es una preferencia: por debajo de
+     44 px se yerra, y errarle a un descarte es descartar la propiedad de al lado. */
+  .btn,
+  .chip,
+  .tabbar button,
+  .menu-mas button { min-height: 44px; }
+
+  .acciones-foto button,
+  .acciones-foto a {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* La barra de abajo tapa el final de la lista si no se le deja el hueco. */
+  body { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+  .pie { margin-bottom: 8px; }
+
+  /* ------------------------------------------------------ barra del pulgar */
+
+  .tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 80;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background: var(--paper);
+    border-top: 1px solid var(--linea-2);
+    padding-bottom: env(safe-area-inset-bottom);
+    /* La sombra va hacia ARRIBA: la barra es un papel apoyado sobre la lista,
+       y la lista pasa por debajo. */
+    box-shadow: 0 -6px 18px rgba(20, 32, 43, .10);
+  }
+
+  .tabbar button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    position: relative;
+    padding: 6px 2px;
+    border: 0;
+    background: none;
+    color: var(--ink-3);
+    font: inherit;
+    font-size: 10px;
+    letter-spacing: .2px;
+    cursor: pointer;
+  }
+
+  .tabbar button svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* El activo se marca con COLOR y con una barra arriba del icono, no solo con
+     color: sobre una pantalla al sol el color solo no alcanza. */
+  .tabbar button.on { color: var(--acento); }
+
+  .tabbar button.on::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 26px;
+    height: 2px;
+    border-radius: 0 0 2px 2px;
+    background: var(--acento);
+  }
+
+  .tabbar-n {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    margin-left: 6px;
+    min-width: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: var(--coral);
+    color: #fff;
+    font-family: var(--mono, ui-monospace, monospace);
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+  }
+
+  /* ----------------------------------------------------------- menu "Mas" */
+
+  .menu-mas {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    z-index: 81;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px;
+    background: var(--paper);
+    border-radius: 14px;
+    box-shadow: 0 12px 34px rgba(20, 32, 43, .24);
+  }
+
+  .menu-mas[hidden] { display: none; }
+
+  .menu-mas button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .menu-mas button:active { background: var(--hundido); }
+  .menu-mas .tabbar-n { position: static; margin: 0; }
+}
+
+/* En pantallas anchas la barra del pulgar no tiene sentido: las pestanas de
+   arriba se ven enteras y el mouse llega a todos lados. */
+@media (min-width: 861px) {
+  .tabbar, .menu-mas { display: none !important; }
+}
+
+/* ------------------------------------------------------------------- inicio */
+
+/* La pantalla de arranque. Contesta una sola pregunta —"que miro hoy"— y lleva
+   ahi de un toque. Antes lo primero que se veia en el telefono eran dos parrafos
+   explicando como funciona el score: util una vez, no todos los dias. */
+.inicio-cab { margin-bottom: 14px; }
+.inicio-cab h2 { margin: 0; font-size: 26px; letter-spacing: -.4px; }
+.inicio-sub { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; }
+.inicio-sub b { font-family: var(--mono, ui-monospace, monospace); font-weight: 600; }
+
+/* Tres destinos, no una grilla de metricas: cada uno es un boton que va a algun
+   lado. El numero manda porque es lo unico que cambia de un dia al otro. */
+.inicio-atajos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.atajo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 12px 12px 13px;
+  border: 1px solid var(--linea-2);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.atajo:active { background: var(--hundido); }
+
+.atajo-n {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--acento);
+}
+
+.atajo-t { font-size: 13px; font-weight: 600; }
+.atajo-p { font-size: 11px; color: var(--ink-3); line-height: 1.25; }
+
+.inicio-mejor h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+@media (max-width: 860px) {
+  /* Con tres columnas en 390 px el pie de cada atajo entra en cuatro renglones.
+     El numero y el titulo alcanzan; el pie explica y puede esperar. */
+  .atajo-p { display: none; }
+  .atajo { padding: 11px 10px; }
+  .atajo-n { font-size: 24px; }
+}
+
+/* ------------------------------------------------- descartados en el telefono */
+
+@media (max-width: 860px) {
+  /* La tabla de descartados tiene ocho columnas y mide 849 px: era lo unico que
+     seguia rompiendo la pantalla despues de todo lo demas.
+
+     No se convierte en tarjetas ni se le pone scroll horizontal. Se le sacan las
+     tres columnas que en un telefono no aportan —barrio, precio y la etiqueta de
+     aprendizaje— y quedan las cuatro que son el motivo de esta pantalla: cual era,
+     por que se rechazo, con que palabras, y como volver a considerarla. El resto
+     esta a un toque en el detalle.
+
+     Scroll horizontal habria sido mas barato de escribir y peor de usar: en la
+     pantalla que existe para RELEER lo que uno decidio, la mitad del texto quedaria
+     escondida hacia la derecha, y nadie arrastra una tabla para leer. */
+  .tabla-desc thead th:nth-child(3),
+  .tabla-desc thead th:nth-child(4),
+  .tabla-desc thead th:nth-child(7),
+  .tabla-desc tbody td:nth-child(3),
+  .tabla-desc tbody td:nth-child(4),
+  .tabla-desc tbody td:nth-child(7) { display: none; }
+
+  /* Sacar columnas bajo de 849 a 705 px y no alcanzo: la tabla se sigue expandiendo
+     al ancho de su contenido porque el motivo escrito a mano no corta. `fixed` la
+     obliga a respetar la pantalla y `break-word` deja que el texto baje de renglon,
+     que es lo que uno quiere leer en un telefono de todos modos. */
+  .tabla-desc {
+    table-layout: fixed;
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .tabla-desc td { overflow-wrap: anywhere; }
+  .tabla-desc th:first-child, .tabla-desc td:first-child { width: 38px; }
+  .tabla-desc th:last-child, .tabla-desc td:last-child { width: 62px; }
+  .tabla-desc th,
+  .tabla-desc td { padding: 9px 8px; }
+  .tabla-desc th:first-child,
+  .tabla-desc td:first-child { padding-left: 10px; }
+}

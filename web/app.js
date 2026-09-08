@@ -21,7 +21,7 @@
   var TANDA = 60;
 
   var estado = {
-    vista: "favoritos",
+    vista: "inicio",
     abierto: null,
     limites: {},
     filtros: {
@@ -1561,6 +1561,70 @@
 
      Candidato / al limite no desaparecen: siguen ordenando Explorar y siguen pintados en
      la etiqueta de cada card. Dejan de ser una pantalla que hay que entender. */
+  // ------------------------------------------------------------------ inicio
+
+  /* LA PANTALLA DE ARRANQUE.
+     No es un tablero de estadisticas. La primera pantalla del telefono tiene que
+     contestar una sola pregunta —"que miro hoy"— y llevar ahi de un toque. Los
+     numeros que muestra son los tres destinos que existen; si alguno esta en cero,
+     lo dice y no lo esconde, porque cero avisos nuevos es informacion, no un hueco.
+
+     Antes de esta pantalla lo primero que se veia en el telefono eran dos bloques
+     de texto explicando el score. Util una vez, no todos los dias. */
+  function vistaInicio(cont) {
+    var considerados = D.avisos.filter(function (a) {
+      return pasaFiltros(a) && a.seccion !== "filtrados";
+    });
+    var favs = D.avisos.filter(function (a) { return a.pinned && a.decision !== "descartado"; });
+    var nuevos = considerados.filter(function (a) {
+      var d = diasPublicado(a);
+      return d !== null && d <= DIAS_NUEVO;
+    });
+
+    var s = el("div", "seccion inicio");
+    var corrida = D.generado ? fechaCorta(D.generado) : null;
+
+    s.innerHTML =
+      '<div class="inicio-cab">' +
+        "<h2>Hoy</h2>" +
+        (corrida ? '<p class="inicio-sub">Ultima busqueda <b>' + corrida + "</b></p>" : "") +
+      "</div>" +
+      '<div class="inicio-atajos">' +
+        atajo("nuevos", "Para llamar", nuevos.length,
+              "publicadas hace " + DIAS_NUEVO + " dias o menos") +
+        atajo("favoritos", "Favoritos", favs.length, "las que marcaste") +
+        atajo("explorar", "Explorar", considerados.length, "todo lo que pasa los filtros") +
+      "</div>";
+
+    /* La mejor de hoy, entera. Un numero manda a una lista; una propiedad se
+       decide. Sin esto la pantalla de inicio seria un indice y nada mas. */
+    var mejor = ordenar(nuevos.length ? nuevos : considerados)[0];
+    if (mejor) {
+      var t = el("div", "inicio-mejor");
+      t.appendChild(el("h3", null, nuevos.length ? "La mejor de las nuevas" : "La mejor de la lista"));
+      var g = el("div", "grilla");
+      g.appendChild(card(mejor));
+      t.appendChild(g);
+      s.appendChild(t);
+    } else {
+      s.appendChild(el("div", "vacio",
+        "Hoy no hay nada que pase los filtros. Probá aflojar alguno desde Mas > Filtros."));
+    }
+    cont.appendChild(s);
+  }
+
+  function atajo(vista, titulo, n, pie) {
+    return '<button class="atajo" data-vista="' + vista + '">' +
+      '<b class="atajo-n">' + n + "</b>" +
+      '<span class="atajo-t">' + titulo + "</span>" +
+      '<span class="atajo-p">' + pie + "</span></button>";
+  }
+
+  function fechaCorta(iso) {
+    var p = String(iso).slice(0, 10).split("-");
+    return p.length === 3 ? p[2] + "/" + p[1] : iso;
+  }
+
   function vistaFavoritos(cont) {
     var lista = ordenar(D.avisos.filter(function (a) {
       return a.pinned && a.decision !== "descartado";
@@ -1738,7 +1802,8 @@
     _porId = null;
     var m = $("#main");
     m.innerHTML = "";
-    if (estado.vista === "favoritos") vistaFavoritos(m);
+    if (estado.vista === "inicio") vistaInicio(m);
+    else if (estado.vista === "favoritos") vistaFavoritos(m);
     else if (estado.vista === "nuevos") vistaNuevos(m);
     else if (estado.vista === "explorar") vistaExplorar(m);
     else if (estado.vista === "actividad") vistaActividad(m);
@@ -1779,6 +1844,15 @@
     var pf = $("#cuenta-favoritos");
     pf.textContent = favs;
     pf.hidden = !favs;
+
+    /* La barra del pulgar refleja los mismos numeros. Un contador calculado dos veces
+       es un contador que algun dia dice dos cosas. */
+    [["#tb-nuevos", nuevos], ["#tb-favoritos", favs], ["#mm-filtros-n", n]].forEach(function (par) {
+      var e = $(par[0]);
+      if (!e) return;
+      e.textContent = par[1];
+      e.hidden = !par[1];
+    });
 
     pintarPendientes();
   }
@@ -1823,12 +1897,79 @@
         x.classList.remove("on");
         x.setAttribute("aria-selected", "false");
       });
-      b.classList.add("on");
-      b.setAttribute("aria-selected", "true");
-      estado.vista = b.dataset.vista;
+      irA(b.dataset.vista);
+    });
+
+    /* UNA SOLA FUNCION CAMBIA DE VISTA, la usen las pestanas de arriba o la barra de
+       abajo. Con dos caminos, tocar abajo dejaba la pestana de arriba marcando otra
+       cosa, y al volver a una pantalla ancha la marca estaba mal. */
+    function irA(vista) {
+      estado.vista = vista;
       estado.limites = {};
+      Array.prototype.forEach.call($("#tabs").children, function (x) {
+        var on = x.dataset.vista === vista;
+        x.classList.toggle("on", on);
+        x.setAttribute("aria-selected", String(on));
+      });
+      Array.prototype.forEach.call($("#tabbar").children, function (x) {
+        var on = x.dataset.vista === vista;
+        x.classList.toggle("on", on);
+        if (on) x.setAttribute("aria-current", "page");
+        else x.removeAttribute("aria-current");
+      });
+      cerrarMas();
       render();
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function cerrarMas() {
+      $("#menu-mas").hidden = true;
+      $("#btn-mas").setAttribute("aria-expanded", "false");
+    }
+
+    /* La banda plegada se abre al tocarla. En pantalla ancha no se pliega, asi que
+       esto no hace nada ahi. */
+    $("#banda").addEventListener("click", function () {
+      this.classList.toggle("abierta");
+    });
+
+    $("#tabbar").addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      if (b.id === "btn-mas") {
+        var m = $("#menu-mas");
+        m.hidden = !m.hidden;
+        b.setAttribute("aria-expanded", String(!m.hidden));
+        return;
+      }
+      irA(b.dataset.vista);
+    });
+
+    $("#menu-mas").addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      if (b.dataset.vista) return irA(b.dataset.vista);
+      cerrarMas();
+      if (b.id === "mm-filtros") $("#btn-filtros").click();
+      if (b.id === "mm-exportar") $("#btn-exportar").click();
+    });
+
+    /* Tocar fuera cierra el menu. Sin esto queda abierto tapando la lista y la unica
+       salida es volver a acertarle al mismo boton de 44 px. */
+    document.addEventListener("click", function (e) {
+      if ($("#menu-mas").hidden) return;
+      if (e.target.closest("#menu-mas") || e.target.closest("#btn-mas")) return;
+      cerrarMas();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") cerrarMas();
+    });
+
+    /* Los atajos de la pantalla de inicio son la misma navegacion. */
+    $("#main").addEventListener("click", function (e) {
+      var a = e.target.closest(".atajo");
+      if (a) irA(a.dataset.vista);
     });
 
     $("#btn-filtros").addEventListener("click", function () {
