@@ -316,6 +316,90 @@ select { min-width: 140px; }
   font-weight: 600;
 }
 
+/* --------------------------------------------------------------------- tipos */
+
+/* LA FILA DE TIPOS — 2026-09-08, pedido de Mario: "filtrar rapidamente las propiedades
+   entre casa y depto, para q al entrar en casa vea solo casa".
+
+   POR QUE ES UNA FILA PROPIA Y NO UN CHIP MAS EN «Filtros». El panel de filtros arranca
+   plegado y en el telefono esta dos toques adentro del menu «Mas»: cualquier cosa que se
+   use en cada pantalla no puede vivir ahi. Y por que no una pestana mas de la barra de
+   abajo: esas son VISTAS -donde estoy-, y el tipo es una LENTE que cruza todas.
+
+   Va pegada al pie de la barra, compartiendo su papel y su sticky: se mueve con el
+   encabezado y esta a la vista en cada scroll, que es la unica forma de que un modo que
+   persiste entre visitas no se lea como un sistema roto. */
+.tipos-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px 10px;
+  border-top: 1px solid var(--linea);
+  padding-top: 10px;
+  margin-top: -1px;
+}
+
+.tipos-rotulo {
+  font: 600 10px/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.tipos {
+  display: flex;
+  gap: 2px;
+  background: var(--hundido);
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.tipos button {
+  border: 0;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font: 500 13px/1.4 var(--sans);
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background var(--rapido), color var(--rapido), box-shadow var(--rapido);
+}
+
+.tipos button:hover { color: var(--ink); background: rgba(255, 255, 255, .6); }
+
+.tipos button.on {
+  background: var(--acento);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: var(--e1);
+}
+
+/* LA CUENTA ES LA MITAD DEL CONTROL. Sin ella «Casa» y «Casa que no tiene ninguna» se
+   tocan igual, y uno se entera despues de mirar una pantalla vacia. En mono porque es un
+   numero que se compara con el de al lado. */
+.tipos-n {
+  font: 600 11px/1 var(--mono);
+  color: var(--ink-3);
+  background: var(--paper);
+  border-radius: 5px;
+  padding: 3px 5px;
+  min-width: 10px;
+  text-align: center;
+}
+
+.tipos button.on .tipos-n { background: rgba(255, 255, 255, .22); color: #fff; }
+
+/* En cero se apaga, no se esconde: «Casa 0» contesta «por que no veo casas», y una fila
+   que pierde botones cambia de ancho cada vez que se toca un filtro. */
+.tipos button.cero { opacity: .45; }
+.tipos button.cero:not(.on) { cursor: default; }
+
+.tipos-fila[hidden] { display: none; }
+
 /* -------------------------------------------------------------------- banda */
 
 .banda {
@@ -1533,6 +1617,37 @@ table.ficha td:last-child { font-family: var(--mono); font-size: 12.5px; }
 
   /* Las pestanas se fueron abajo. Dejarlas aca era la fila de 768 px. */
   .tabs { display: none; }
+
+  /* LA FILA DE ARRIBA ES AHORA LA DE TIPOS, Y LA DEL NOMBRE SE VA ENTERA.
+     Con las pestanas abajo y los controles en «Mas», de `.barra-fila` quedaba solo el
+     rotulo "Busqueda de alquiler / CABA": 44 px pegados arriba de todo que no hacen nada
+     ningun dia. Sumarle la fila de tipos debajo dejaba el encabezado en ~95 px antes de
+     la primera foto, y ese presupuesto ya se habia peleado una vez ("eran 110 px de
+     controles antes de la primera propiedad").
+
+     Asi que no se suma: se cambia. Donde decia el nombre de la app ahora se elige el
+     tipo. Orientacion no se pierde -la barra de abajo dice en que vista estas y cada
+     seccion tiene su titulo-, y el encabezado sigue midiendo una fila. */
+  .barra-fila { display: none; }
+
+  .tipos-fila {
+    padding: 0;
+    border-top: 0;
+    margin-top: 0;
+  }
+
+  .tipos-rotulo { display: none; }
+
+  /* Los cuatro reparten el ancho en partes iguales: asi el blanco de cada uno no depende
+     del largo de su palabra y el pulgar aprende una posicion fija por tipo. */
+  .tipos { width: 100%; }
+  .tipos button {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px;
+    padding: 6px 4px;
+    gap: 5px;
+  }
 
   /* La cotizacion, exportar y filtros viven en el menu "Mas": no se tocan mientras
      se decide, y entre los tres costaban una fila entera. El indicador de guardado

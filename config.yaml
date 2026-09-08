@@ -3,7 +3,7 @@
 # Nada de esto se cambia solo: cualquier propuesta de cambio se muestra como diff y espera confirmacion.
 
 version: 1
-fecha_ultima_edicion: 2026-08-25
+fecha_ultima_edicion: 2026-09-08
 
 # ---------------------------------------------------------------------------
 # FILTROS DUROS
@@ -21,10 +21,23 @@ duros:
                                      # Un toilette cuenta medio, asi que 1.5 = un bano
                                      # completo mas un toilette, que es como el perfil lo
                                      # viene diciendo. Con 2 exigiria dos banos completos.
-  tipos_permitidos: [departamento, ph]   # MARIO 2026-09-07: "ni casas ... Juan no quiere
-                                     # irse a casas". Medido antes de aplicar: la lista
-                                     # corta pasa de 464 a 307 sacando casas, y a 165
-                                     # sumando el minimo de banos.
+  tipos_permitidos: [departamento, ph, casa]
+                                     # LAS CASAS VOLVIERON EL 2026-09-08, confirmado por
+                                     # Mario al pedir que la pagina se recorra por tipo:
+                                     # "al entrar en casa vea solo casa, depto solo deptos
+                                     # y ph lo mismo, serian esos 3". Una pestana Casa
+                                     # sobre un tipo prohibido muestra cero para siempre.
+                                     #
+                                     # Salieron el 2026-09-07 ("ni casas ... Juan no quiere
+                                     # irse a casas") con una medicion que decia 464 -> 307,
+                                     # o sea 157 casas de menos. ESE NUMERO YA NO VALE: se
+                                     # midio sobre `seccion` de avisos.json, que es de la
+                                     # ultima corrida CON red (ver CLAUDE.md sesion 14), y
+                                     # ademas es anterior al minimo de 1.5 banos y a la
+                                     # limpieza de caidos. Medido de nuevo el 2026-09-08
+                                     # sobre web/data.js, que es lo que la pagina muestra:
+                                     # solo 25 casas vuelven a la lista corta (103 -> 128).
+                                     # De 580 casas vivas, 210 fallan tipo Y algo mas.
   m2_cubiertos_min: 60               # era 90. Ya NO es un criterio, solo un piso de
                                      # sanidad para que no entre un monoambiente mal
                                      # etiquetado. "Medianamente grande" lo resuelve el
@@ -175,7 +188,14 @@ zonas:
   # o similar para la localidad sola: con 8 paginas por pedido, hoy ~6 de cada 7 avisos
   # que bajamos de ahi son de localidades que no queremos, asi que la cobertura REAL de
   # Vicente Lopez es una fraccion de esas 8 paginas.
-  barrido: [Palermo, Belgrano, Colegiales, Nunez, Saavedra, Villa Ortuzar, Villa Urquiza, Coghlan, Vicente Lopez]
+  # PALERMO SALIO DE `barrido` EL 2026-09-08, un dia tarde. El 2026-09-07 salio de
+  # `incluidas` (Mario: "estamos mas para zonas como a partir de Belgrano para arriba")
+  # y quedo aca: o sea que se seguia pidiendo todos los dias para tirar el 100% de lo que
+  # traia. Medido sobre la corrida del 2026-09-08: 28 de los 142 pedidos del dia -el 20%
+  # del presupuesto, mas que ningun otro barrio- para 758 avisos en base y CERO en la
+  # lista corta. Es la leccion de la sesion 14 repetida tal cual: `barrido` se justifica
+  # por lo que ACEPTA, no por lo que trae.
+  barrido: [Belgrano, Colegiales, Nunez, Saavedra, Villa Ortuzar, Villa Urquiza, Coghlan, Vicente Lopez]
   # Las Canitas se publica COMO Belgrano y COMO Palermo, asi que filtrar por el campo
   # barrio no alcanza: hay que mirar tambien el texto del aviso. Verificado en la primera
   # corrida grande: se colaron 4 avisos de Las Canitas por el campo barrio de Belgrano.
@@ -254,9 +274,31 @@ busqueda:
   # La terraza se filtra por nuestro lado con m2_totales - m2_cubiertos, que ademas es un
   # numero real y no un tag que el anunciante marca a dedo.
   tipos_slug: [casa, departamentos]
-  max_paginas_por_barrio: 8        # 30 avisos por pagina -> hasta 240 por barrio y slot.
-                                   # Era 12; con 90 pedidos de techo, 8 reparte mejor entre
-                                   # barrios en vez de gastarlos todos en Palermo.
+  max_paginas_por_barrio: 12       # 30 avisos por pagina -> hasta 360 por barrio y slot.
+                                   # VUELVE A 12 EL 2026-09-08 con la plata que libero
+                                   # sacar Palermo. Habia bajado a 8 justamente "para no
+                                   # gastarlos todos en Palermo", y con Palermo afuera el
+                                   # argumento se cae solo.
+                                   #
+                                   # Y el 8 estaba CORTANDO CANDIDATOS, no sobrante caro.
+                                   # La cobertura ordena por precio ascendente, asi que el
+                                   # corte se come la banda de arriba... que sigue estando
+                                   # abajo del techo de USD 2.000. Medido contra el portal
+                                   # el 2026-09-08, pagina 8 de `-3-ambientes`:
+                                   #     Palermo       21 pags, la 8 termina en USD 1.100
+                                   #     Belgrano      12 pags, la 8 termina en USD 1.300
+                                   #     Nunez          4 pags  (ya completo)
+                                   #     Villa Urquiza  4 pags  (ya completo)
+                                   # O sea: en Belgrano no se bajaba NADA entre USD 1.300 y
+                                   # 2.000. Con 12 Belgrano entra entero y el resto de los
+                                   # barrios ni se entera, porque el tope es un techo.
+                                   #
+                                   # NO hay filtro de precio del portal para evitar esto.
+                                   # Re-verificado el 2026-09-08 mirando los VALORES:
+                                   # `-menos-de-2000-dolares` y `-hasta-2000-dolares`
+                                   # devuelven 618 sobre 616 sin filtro (no filtran nada), y
+                                   # `-0-2000-dolares` devuelve 9.992 en 334 paginas: ignora
+                                   # el barrio y trae toda CABA. Ninguno se usa.
 
   # DOS PASADAS (2026-08-21). Antes habia una sola, `-orden-precio-ascendente`, y por eso
   # el sistema traia todos los dias el mismo conjunto: las N paginas mas baratas de cada

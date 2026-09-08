@@ -47,6 +47,31 @@
       </div>
     </div>
 
+    <!--
+      EL SELECTOR DE TIPO — pedido de Mario el 2026-09-08: "filtrar rapidamente las
+      propiedades entre casa y depto, para q al entrar en casa vea solo casa, depto solo
+      deptos y ph lo mismo, serian esos 3".
+
+      NO es un chip mas del panel de filtros ni una pestana mas de la barra de abajo.
+      El panel de filtros esta plegado y en el telefono vive dos toques adentro del menu
+      "Mas": ahi no se "filtra rapido" nada. Y la barra de abajo son VISTAS -donde estoy-
+      mientras que el tipo es una LENTE que cruza todas: en Explorar, en Nuevas, en
+      Favoritos y en Descartados quiero poder ver solo casas.
+
+      Por eso vive en la barra de arriba, siempre visible, con la cuenta de cada tipo al
+      lado. La cuenta es la mitad del control: sin ella "Casa" y "Casa (0)" se tocan igual
+      y uno se entera despues de mirar una pantalla vacia.
+    -->
+    <div class="tipos-fila">
+      <span class="tipos-rotulo">Tipo</span>
+      <div class="tipos" id="tipos" role="tablist" aria-label="Tipo de propiedad">
+        <button data-tipo="" class="on" role="tab" aria-selected="true">Todo <b class="tipos-n"></b></button>
+        <button data-tipo="departamento" role="tab" aria-selected="false">Depto <b class="tipos-n"></b></button>
+        <button data-tipo="ph" role="tab" aria-selected="false">PH <b class="tipos-n"></b></button>
+        <button data-tipo="casa" role="tab" aria-selected="false">Casa <b class="tipos-n"></b></button>
+      </div>
+    </div>
+
     <div class="filtros" id="filtros" hidden>
       <div class="campo"><label for="f-precio-min">Precio USD min</label><input type="number" id="f-precio-min" step="50"></div>
       <div class="campo"><label for="f-precio-max">Precio USD max</label><input type="number" id="f-precio-max" step="50"></div>
@@ -75,8 +100,10 @@
           <option value="num">numero (#)</option>
         </select>
       </div>
+      <!-- El multiselect de Tipo se saco el 2026-09-08: lo reemplaza la fila de tipos
+           de arriba. Dos controles sobre el mismo campo son dos estados que algun dia
+           discrepan, y ademas el de arriba no se puede ignorar. -->
       <div class="campo campo-doble"><label for="f-barrio">Barrio</label><select id="f-barrio" multiple size="5"></select></div>
-      <div class="campo campo-doble"><label for="f-tipo">Tipo</label><select id="f-tipo" multiple size="5"></select></div>
       <div class="campo campo-ancho">
         <label>Marcas</label>
         <div class="chips" id="f-chips">

@@ -16,6 +16,7 @@
   var LS_DEC = "alquiler.decisiones";
   var LS_COT = "alquiler.cotizacion";
   var LS_VISITA = "alquiler.ultima_visita";
+  var LS_TIPO = "alquiler.tipo";
 
   /* «SIEMPRE VEO LO MISMO» — 2026-09-08, y tenia razon.
      La pantalla contaba lo publicado hace 14 dias o menos. Eso mide la edad del
@@ -37,6 +38,40 @@
     try { localStorage.setItem(LS_VISITA, new Date().toISOString().slice(0, 10)); } catch (e) {}
   }
 
+  /* EL TIPO ES UNA LENTE, NO UN FILTRO MAS — 2026-09-08.
+     Mario: "filtrar rapidamente las propiedades entre casa y depto, para q al entrar en
+     casa vea solo casa, depto solo deptos y ph lo mismo, serian esos 3".
+
+     Se guarda en el navegador a proposito: lo pidio como un MODO en el que uno entra, no
+     como un ajuste de una pantalla. Si no sobreviviera al cambio de vista, "entrar en
+     casa" duraria hasta el primer toque en la barra de abajo.
+
+     El riesgo conocido de un modo que persiste es el de siempre en este proyecto: que uno
+     vuelva al dia siguiente, vea poco y crea que el sistema se rompio. Se cubre con lo que
+     ya funciono antes -hacerlo IMPOSIBLE de no ver-: la fila esta siempre arriba, el chip
+     activo va pintado, y todo cartel de "no hay nada" nombra el tipo y dice como salir. */
+  function tipoGuardado() {
+    try {
+      var t = localStorage.getItem(LS_TIPO);
+      return t && ["casa", "ph", "departamento"].indexOf(t) >= 0 ? [t] : [];
+    } catch (e) { return []; }
+  }
+
+  var TIPOS_NOMBRE = { departamento: "departamentos", ph: "PH", casa: "casas" };
+
+  function tipoActivo() {
+    return estado.filtros.tipos.length === 1 ? estado.filtros.tipos[0] : "";
+  }
+
+  /* Todo cartel de vacio pasa por aca. Un "no hay nada" a secas mientras hay una lente
+     puesta es la mentira mas facil de escribir y la mas cara: manda a aflojar filtros que
+     no son el problema. */
+  function conLente(texto) {
+    var t = tipoActivo();
+    return t ? texto + " Estas viendo solo " + TIPOS_NOMBRE[t] +
+               ": toca «Todo» arriba para ver el resto." : texto;
+  }
+
   /* Cuantas tarjetas se pintan de entrada por seccion. No es paginado: es una primera
      tanda y un boton que AGREGA. Nunca se pierde lo que ya scrolleaste. */
   var TANDA = 60;
@@ -47,7 +82,7 @@
     limites: {},
     filtros: {
       precioMin: null, precioMax: null, dorm: null, banos: null, m2: null, ext: null,
-      barrios: [], tipos: [], estado: "", orden: "default", flags: {}
+      barrios: [], tipos: tipoGuardado(), estado: "", orden: "default", flags: {}
     }
   };
 
@@ -309,7 +344,10 @@
     return false;
   }
 
-  function pasaFiltros(a) {
+  /* `ignorarTipo` existe para UNA cosa: contar cuantas hay de cada tipo sin que la lente
+     puesta se cuente a si misma. Sin eso el chip "Casa" diria 0 mientras estas parado en
+     "Depto", que es exactamente el numero que el chip existe para contestar. */
+  function pasaFiltros(a, ignorarTipo) {
     var f = estado.filtros;
     var dec = decisiones()[a.id];
     var descartada = (dec && dec.accion === "descartar") || a.decision === "descartado";
@@ -337,7 +375,7 @@
     if (f.flags.solo_caba && esGBA(a.barrio)) return false;
     if (f.flags.solo_gba && !esGBA(a.barrio)) return false;
     if (f.barrios.length && f.barrios.indexOf(a.barrio) < 0) return false;
-    if (f.tipos.length && f.tipos.indexOf(a.tipo) < 0) return false;
+    if (!ignorarTipo && f.tipos.length && f.tipos.indexOf(a.tipo) < 0) return false;
     if (f.estado) {
       if (a.estado === "sin_clasificar" || a.estado === null || a.estado === undefined) return false;
       if ((RANK_ESTADO[a.estado] === undefined ? 1 : RANK_ESTADO[a.estado]) < RANK_ESTADO[f.estado]) return false;
@@ -361,7 +399,6 @@
     var f = estado.filtros, n = 0;
     ["precioMin", "precioMax", "dorm", "banos", "m2", "ext"].forEach(function (k) { if (f[k] !== null) n++; });
     if (f.barrios.length) n++;
-    if (f.tipos.length) n++;
     if (f.estado) n++;
     n += Object.keys(f.flags).filter(function (k) { return f.flags[k]; }).length;
     return n;
@@ -1003,7 +1040,7 @@
       "Despues decime el numero: «contame del 7» o «descarta el 3 porque la cocina esta hecha pelota».</p>";
 
     if (!lista.length) {
-      s.appendChild(el("div", "vacio", "Ningun aviso pasa los filtros actuales."));
+      s.appendChild(el("div", "vacio", conLente("Ningun aviso pasa los filtros actuales.")));
       cont.appendChild(s);
       return;
     }
@@ -1650,8 +1687,8 @@
       t.appendChild(g);
       s.appendChild(t);
     } else {
-      s.appendChild(el("div", "vacio",
-        "Hoy no hay nada que pase los filtros. Probá aflojar alguno desde Mas > Filtros."));
+      s.appendChild(el("div", "vacio", conLente(
+        "Hoy no hay nada que pase los filtros. Probá aflojar alguno desde Mas > Filtros.")));
     }
     cont.appendChild(s);
   }
@@ -1679,8 +1716,8 @@
       "un filtro duro: una decision tuya pesa mas que una regla. " + LEYENDA_SCORE + "</p>";
 
     if (!lista.length) {
-      s.appendChild(el("div", "vacio",
-        "Todavia no marcaste ninguno. Anda a Explorar y toca el corazon de los que te interesen."));
+      s.appendChild(el("div", "vacio", conLente(
+        "Todavia no marcaste ninguno. Anda a Explorar y toca el corazon de los que te interesen.")));
       cont.appendChild(s);
       return;
     }
@@ -1721,9 +1758,9 @@
       var g = el("div", "grilla");
       pintarTanda(g, nuevos, "nuevos", card, s);
     } else {
-      s.appendChild(el("div", "vacio",
+      s.appendChild(el("div", "vacio", conLente(
         conFecha ? "Ninguno de los " + conFecha + " avisos con fecha se publico en las ultimas dos semanas."
-                 : "Todavia no hay ningun aviso con fecha de publicacion."));
+                 : "Todavia no hay ningun aviso con fecha de publicacion.")));
     }
     cont.appendChild(s);
 
@@ -1741,6 +1778,71 @@
     var g2 = el("div", "grilla");
     pintarTanda(g2, sinFecha, "nuevos-sinfecha", card, s2);
     cont.appendChild(s2);
+  }
+
+  // ------------------------------------------------------------------- tipos
+
+  /* LA CUENTA DE CADA CHIP SALE DEL POZO DE LA VISTA EN LA QUE ESTAS, no de la lista
+     corta siempre. Contar siempre sobre la lista corta era una linea y mentia justo donde
+     duele: parado en Favoritos, "Casa 25" invita a tocar y devuelve una pantalla vacia.
+     Un contador que no describe la lista que tenes delante es peor que no tenerlo. */
+  function poolDeVista() {
+    var v = estado.vista;
+    if (v === "favoritos") {
+      return D.avisos.filter(function (a) { return a.pinned && a.decision !== "descartado"; });
+    }
+    if (v === "descartados") {
+      return (D.descartados || []).map(function (d) {
+        return (d.id ? porId(d.id) : null) || porDireccion(d.direccion_norm);
+      }).filter(Boolean);
+    }
+    if (v === "explorar") {
+      return D.avisos.filter(function (a) { return pasaFiltros(a, true) && !a.pinned; });
+    }
+    if (v === "nuevos") {
+      return D.avisos.filter(function (a) {
+        var d = diasPublicado(a);
+        return pasaFiltros(a, true) && a.seccion !== "filtrados" && d !== null && d <= DIAS_NUEVO;
+      });
+    }
+    return D.avisos.filter(function (a) {
+      return pasaFiltros(a, true) && a.seccion !== "filtrados";
+    });
+  }
+
+  function pintarTipos() {
+    var fila = document.querySelector(".tipos-fila");
+    /* En Actividad no hay propiedades que filtrar: es la bitacora. Una lente encendida
+       sobre una pantalla que no la usa se lee como que no esta funcionando. */
+    var aplica = estado.vista !== "actividad";
+    if (fila) fila.hidden = !aplica;
+    if (!aplica) return;
+
+    var pool = poolDeVista();
+    var act = tipoActivo();
+    Array.prototype.forEach.call($("#tipos").children, function (b) {
+      var t = b.dataset.tipo;
+      var n = t ? pool.filter(function (a) { return a && a.tipo === t; }).length : pool.length;
+      b.querySelector(".tipos-n").textContent = n;
+      var on = t === act;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-selected", String(on));
+      /* Un tipo en cero se apaga pero NO se esconde. Que "Casa 0" siga ahi es la
+         respuesta a "por que no veo casas"; sacarlo deja la pregunta sin contestar y
+         encima hace bailar el ancho de la fila cada vez que cambia un filtro. */
+      b.classList.toggle("cero", n === 0);
+    });
+  }
+
+  function elegirTipo(t) {
+    estado.filtros.tipos = t ? [t] : [];
+    try {
+      if (t) localStorage.setItem(LS_TIPO, t);
+      else localStorage.removeItem(LS_TIPO);
+    } catch (e) {}
+    estado.limites = {};
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   // ------------------------------------------------------------------ render
@@ -1852,6 +1954,8 @@
     else if (estado.vista === "actividad") vistaActividad(m);
     else vistaDescartados(m);
 
+    pintarTipos();
+
     var r = D.resumen || {};
     /* De donde sale la lista corta. Sin esto, un portal puede dejar de aportar durante
        dias -o aportar un tercio- sin que se note: la card no decia su origen y el pie
@@ -1882,7 +1986,8 @@
     pn.hidden = !nuevos;
 
     var favs = D.avisos.filter(function (a) {
-      return a.pinned && a.decision !== "descartado";
+      return a.pinned && a.decision !== "descartado" &&
+        (!estado.filtros.tipos.length || estado.filtros.tipos.indexOf(a.tipo) >= 0);
     }).length;
     var pf = $("#cuenta-favoritos");
     pf.textContent = favs;
@@ -1913,20 +2018,18 @@
     f.estado = $("#f-estado").value;
     f.orden = $("#f-orden").value;
     f.barrios = Array.prototype.slice.call($("#f-barrio").selectedOptions).map(function (o) { return o.value; });
-    f.tipos = Array.prototype.slice.call($("#f-tipo").selectedOptions).map(function (o) { return o.value; });
+    // f.tipos NO se lee de aca: lo maneja la fila de tipos de la barra (elegirTipo).
     estado.limites = {};
     render();
   }
 
   function iniciar() {
-    var barrios = [], tipos = [];
+    var barrios = [];
     D.avisos.forEach(function (a) {
       if (a.barrio && barrios.indexOf(a.barrio) < 0) barrios.push(a.barrio);
-      if (a.tipo && tipos.indexOf(a.tipo) < 0) tipos.push(a.tipo);
     });
-    barrios.sort(); tipos.sort();
+    barrios.sort();
     $("#f-barrio").innerHTML = barrios.map(function (b) { return "<option>" + esc(b) + "</option>"; }).join("");
-    $("#f-tipo").innerHTML = tipos.map(function (t) { return "<option>" + esc(t) + "</option>"; }).join("");
 
     var c = localStorage.getItem(LS_COT) || (D.meta_avisos || {}).cotizacion_bna_venta;
     if (c) $("#cotizacion").value = c;
@@ -2024,6 +2127,11 @@
     $("#filtros").addEventListener("change", leerFiltros);
     $("#filtros").addEventListener("input", function (e) { if (e.target.type === "number") leerFiltros(); });
 
+    $("#tipos").addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (b) elegirTipo(b.dataset.tipo);
+    });
+
     $("#f-chips").addEventListener("click", function (e) {
       var c = e.target.closest(".chip");
       if (!c) return;
@@ -2048,7 +2156,9 @@
       $("#f-estado").value = "";
       $("#f-orden").value = "default";
       Array.prototype.forEach.call($("#f-barrio").options, function (o) { o.selected = false; });
-      Array.prototype.forEach.call($("#f-tipo").options, function (o) { o.selected = false; });
+      /* «Limpiar» NO toca el tipo. Vive fuera de este panel, siempre a la vista, y es la
+         lente en la que uno decidio entrar: un boton escondido en Filtros que ademas te
+         saque de «Casa» seria un efecto que nadie pidio ni ve venir. */
       Array.prototype.forEach.call($("#f-chips").children, function (c) { c.setAttribute("aria-pressed", "false"); });
       estado.filtros.flags = {};
       leerFiltros();

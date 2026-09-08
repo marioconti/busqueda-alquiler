@@ -1,8 +1,8 @@
 # Memoria operativa — busqueda de alquiler CABA
 
 > Memoria entre sesiones. Se actualiza al final de cada corrida.
-> Ultima actualizacion: **2026-08-31** (sesion 16: la cobertura de departamentos no
-> corria nunca — la rotacion giraba en la dimension equivocada).
+> Ultima actualizacion: **2026-09-08** (sesion 17: el tipo pasa a ser una lente de la
+> interfaz, vuelven las casas, y Palermo se seguia barriendo un dia despues de salir).
 >
 > **Las convenciones de trabajo viven en la skill `busqueda-alquiler`**
 > (`~/.claude/skills/busqueda-alquiler/SKILL.md`): como correr el sistema, el sistema
@@ -1273,6 +1273,139 @@ base. **No se perdio nada: Mario los descarto el 2026-08-30 a las 19:11 desde la
 salieron por el veto de descartados, como corresponde. La bitacora lo dice entera. Entro
 uno nuevo, **#5131 Galvan al 2800** (Villa Urquiza, USD 1.400).
 
+## Sesion 17 — el tipo es una lente, no un filtro (2026-09-08)
+
+Mario: *"necesito que la ui se ajuste para filtrar rapidamente las propiedades entre casa
+y depto, para q al entrar en casa vea solo casa, depto solo deptos y ph lo mismo, serian
+esos 3, y mejora de nuevo las busquedas con este input"*.
+
+### Lo primero fue una contradiccion, no una tarea
+
+El 2026-09-07 las casas habian salido del filtro duro (*"ni casas ... Juan no quiere irse
+a casas"*). Una pestana **Casa** sobre un tipo prohibido muestra cero para siempre, asi
+que la pregunta habia que hacerla antes de escribir una linea. **Mario confirmo: vuelven.**
+
+Y el numero con el que habian salido ya no valia. Decia *"la lista corta pasa de 464 a
+307"* —157 casas de menos— y estaba medido sobre el campo `seccion` de `avisos.json`, que
+es de la ultima corrida CON red (la trampa de la sesion 14), ademas de ser anterior al
+minimo de 1,5 banos y a la limpieza de caidos. Medido de nuevo sobre `web/data.js`, que es
+lo que la pagina realmente muestra: **vuelven 25 casas, no 157** (lista corta 118 -> 145;
+vivas: 59 deptos, 43 PH, 25 casas). De 580 casas vivas, 210 fallan `tipo` **y algo mas**,
+asi que el tipo nunca fue lo unico que las frenaba.
+
+**La leccion es de donde se saca un numero para decidir:** el mismo campo, en dos archivos,
+contesta dos preguntas distintas. Para "que ve Mario" se mira `data.js`.
+
+### La lente: por que no es un chip mas ni una pestana mas
+
+Habia tres lugares donde meterlo y dos eran trampa:
+
+| donde | por que NO |
+|---|---|
+| un chip en **Filtros** | el panel arranca plegado y en el telefono esta dos toques adentro de «Mas». Ahi no se "filtra rapido" nada |
+| una pestana en la **barra de abajo** | esas son VISTAS —*donde estoy*—. El tipo cruza todas: en Explorar, en Nuevas, en Favoritos y en Descartados quiero poder ver solo casas |
+| **una fila propia en la barra de arriba** | siempre visible, se mueve con el sticky, y la lente se ve puesta desde cualquier scroll |
+
+**La cuenta al lado de cada tipo es la mitad del control.** Sin ella «Casa» y «Casa que no
+tiene ninguna» se tocan igual, y uno se entera despues de mirar una pantalla vacia. Y sale
+del **pozo de la vista en la que estas**, no de la lista corta siempre: parado en
+Favoritos, un «Casa 25» global invita a tocar y devuelve el vacio. Por eso `pasaFiltros`
+recibio `ignorarTipo` — contar el tipo sin que la lente se cuente a si misma.
+
+**Un tipo en cero se apaga, no se esconde.** «Casa 0» es la respuesta a *"por que no veo
+casas"*; sacarlo deja la pregunta sin contestar y encima hace bailar el ancho de la fila.
+
+**Se guarda en el navegador** porque Mario lo pidio como un MODO ("al entrar en casa"), no
+como un ajuste de una pantalla: si no sobreviviera al cambio de vista, duraria hasta el
+primer toque en la barra de abajo. El riesgo conocido de un modo que persiste es el de
+siempre aca —volver al dia siguiente, ver poco y creer que se rompio— y se cubre igual que
+siempre: **haciendolo imposible de no ver**. Chip activo pintado, fila siempre arriba, y
+todo cartel de vacio nombra el tipo y dice como salir (`conLente()`).
+
+**En el telefono la fila de tipos REEMPLAZA la del nombre, no se suma.** Con las pestanas
+abajo y los controles en «Mas», de `.barra-fila` quedaba solo "Busqueda de alquiler /
+CABA": 44 px pegados arriba que no hacen nada ningun dia. Sumar la fila dejaba el
+encabezado en ~95 px antes de la primera foto, y ese presupuesto ya se habia peleado una
+vez en la sesion anterior. Orientacion no se pierde: la barra de abajo dice la vista y
+cada seccion tiene su titulo.
+
+**Y se fue el `<select multiple>` de Tipo del panel de Filtros.** Dos controles sobre el
+mismo campo son dos estados que algun dia discrepan. Por lo mismo el tipo salio de la
+cuenta del boton «Filtros» (ya tiene su propio display) y **«Limpiar» no lo toca**: vive
+fuera de ese panel, y sacar a alguien de «Casa» desde un boton escondido es un efecto que
+nadie ve venir.
+
+Verificado en el navegador, 0 errores de consola: Inicio 126 / Explorar 123 (58 depto, 41
+PH, 24 casa) / con «Casa» puesta, 24 tiles y el titulo de seccion diciendo 24 / Favoritos 5
+con «Casa 2» / Actividad esconde la fila / 390 px sin scroll horizontal, cuatro botones de
+88x44.
+
+### PALERMO SE SEGUIA BARRIENDO UN DIA DESPUES DE SALIR
+
+Es la mejor mitad de "mejora las busquedas" y no salio de buscarla: salio de mirar el
+rendimiento por barrio antes de tocar nada.
+
+El 2026-09-07 Palermo salio de `zonas.incluidas` —lo que se ACEPTA— y **quedo en
+`zonas.barrido`** —lo que se PIDE. O sea que se seguia pidiendo todos los dias para tirar
+el 100% de lo que traia. Medido sobre la corrida del 2026-09-08:
+
+    Palermo    28 de los 142 pedidos del dia (20% del presupuesto, mas que ningun otro)
+               758 avisos en base, CERO en la lista corta
+
+**Es la leccion de la sesion 14 repetida tal cual** —*"`barrido` se justifica por lo que
+ACEPTA, no por lo que trae"*— y esta vez el desfasaje duro un dia. **Al sacar una zona de
+`incluidas`, mirar `barrido` en el mismo turno** (y `portales.mercadolibre_zonas`, que en
+este caso ya no tenia Palermo). Quedan 8 zonas y 64 tareas; eran 72.
+
+### El tope de 8 paginas estaba cortando CANDIDATOS, no sobrante caro
+
+Con lo que libero Palermo, `max_paginas_por_barrio` vuelve de 8 a 12. El 8 habia entrado
+*"para no gastarlos todos en Palermo"*, asi que sin Palermo el argumento se cae solo — pero
+el motivo de verdad es otro. La cobertura ordena **por precio ascendente**, y medido contra
+el portal la pagina 8 de `-3-ambientes` termina en:
+
+| barrio | paginas | la pagina 8 llega hasta |
+|---|---|---|
+| Palermo | 21 | USD 1.100 |
+| **Belgrano** | **12** | **USD 1.300** |
+| Nunez | 4 | ya completo |
+| Villa Urquiza | 4 | ya completo |
+
+O sea: **en Belgrano no se bajaba nada entre USD 1.300 y el techo de 2.000.** Con 12,
+Belgrano entra entero y los demas ni se enteran, porque el tope es un techo y no un piso.
+
+**No hay filtro de precio del portal para evitarlo, re-verificado mirando los VALORES:**
+`-menos-de-2000-dolares` y `-hasta-2000-dolares` devuelven 618 sobre 616 sin filtro (no
+filtran nada) y `-0-2000-dolares` devuelve **9.992 en 334 paginas: ignora el barrio y trae
+toda CABA**. Confirma lo de la sesion 11 y suma que el tercero es ademas peligroso.
+
+### El slug `casa` singular es exactamente `casas` mas `ph` — medido, no supuesto
+
+Entre a esta sesion con la hipotesis de que PH —un tercio de la lista corta— no tenia
+cobertura propia, porque `tipos_slug` es `[casa, departamentos]` y nadie pide `ph`. **La
+hipotesis era falsa y el numero la cierra:**
+
+    Saavedra        casa 36  =  casas 14 + ph 22
+    Villa Urquiza   casa 63  =  casas 17 + ph 46
+
+Partirlo en dos slots costaria el doble de pedidos por el mismo inventario. **El comentario
+del config («'casa' EN SINGULAR incluye PH») era exacto y ahora esta medido.** El stream
+casa/ph ademas es barato —2-3 paginas por barrio— o sea que se cubre ENTERO todos los dias.
+El que trunca es departamentos, y por eso el tope de paginas es su problema, no de casa/ph.
+
+### Suelto: `score.py` como CLI moria al final
+
+Un aviso con `direccion` en `None` reventaba el formateo del listado **despues** de haber
+escrito `avisos.json`: el calculo estaba bien y el comando parecia roto.
+
+### Anotado, NO tocado: `Nunez` y `Nunez con tilde` son dos barrios distintos
+
+En la lista corta conviven `Nunez` (11) y su version acentuada (5), y lo mismo
+`Vicente Lopez`. No rompe ningun duro —los dos pasan el de zona— pero **parte los conteos
+y duplica la entrada en el multiselect de Barrio**. Tocar la normalizacion de barrio es
+cambiar una clave de la que dependen la deduplicacion y el veto de descartes, asi que no
+se toco sin medir el radio primero.
+
 ## Riesgos vigentes
 
 1. **La cobertura ya no es completa por corrida, y es a proposito.** Con el techo de 90
@@ -1294,7 +1427,12 @@ uno nuevo, **#5131 Galvan al 2800** (Villa Urquiza, USD 1.400).
    y ordenar, asi que se ven los mismos 48 por barrio cada dia y no hay forma permitida de
    pedir el resto (Belgrano: 48 de 293). En casas y PH si se ve todo. La unica via para lo
    que queda debajo es que el portal lo suba en su propio orden.
-7. **Los avisos de MercadoLibre entran sin dato de exterior** (m2 totales aparece en el
+7. **La lente de tipo persiste entre visitas.** Si Mario deja puesta «Casa» y vuelve al
+   dia siguiente ve 25 y no 145. Esta cubierto por diseno (chip pintado, siempre arriba,
+   carteles de vacio que la nombran) pero es la clase de modo que este proyecto ya vio
+   fallar dos veces. **Si alguna vez pregunta "por que veo tan poco", lo primero a
+   mirar es que tipo tiene puesto.**
+8. **Los avisos de MercadoLibre entran sin dato de exterior** (m2 totales aparece en el
    2,5%). Son el 27% de la lista corta y todos llevan el exterior "a preguntar", que es el
    criterio de mayor peso. Completarlo es trabajo de `detalle.py`, un pedido por aviso.
 

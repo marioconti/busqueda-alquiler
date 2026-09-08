@@ -455,5 +455,8 @@ if __name__ == "__main__":
     print(f'{"piso":>5} {"techo":>6} {"cob":>4}  {"seccion":11s}  direccion')
     for a in sorted(doc["avisos"], key=clave_orden_default):
         d = a["score_desglose"]
+        # `direccion` puede venir en None (un aviso sin calle en la tarjeta) y el
+        # formateo estallaba, matando el listado ENTERO despues de haber escrito
+        # avisos.json: el CLI parecia roto cuando el calculo ya estaba bien.
         print(f'{d["score_piso"]:5.1f} {d["score_techo"]:6.1f} {d["cobertura"]:3.0f}%  '
-              f'{a["seccion"]:11s}  {a["direccion"]:24s}  {a["barrio"]}')
+              f'{a["seccion"]:11s}  {str(a.get("direccion") or "-"):24s}  {a.get("barrio") or "-"}')
