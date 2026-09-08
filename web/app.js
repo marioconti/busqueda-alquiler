@@ -15,6 +15,27 @@
   var D = window.DATOS || { avisos: [], descartados: [], eventos: [], resumen: {} };
   var LS_DEC = "alquiler.decisiones";
   var LS_COT = "alquiler.cotizacion";
+  var LS_VISITA = "alquiler.ultima_visita";
+
+  /* «SIEMPRE VEO LO MISMO» — 2026-09-08, y tenia razon.
+     La pantalla contaba lo publicado hace 14 dias o menos. Eso mide la edad del
+     AVISO, no lo que Mario ya miro: entrando todos los dias, son los mismos treinta
+     y pico durante dos semanas seguidas. Y como la lista se ordena por score, arriba
+     quedaban siempre las mismas: medido, el 58% de la lista corta era de agosto y la
+     primera de todas llevaba 25 dias en el puesto uno.
+     Lo que cambia todos los dias es otra cosa: que entro DESDE QUE EL MIRO. Eso vive
+     en este navegador porque es una pregunta sobre el, no sobre el inventario. */
+  var visitaPrevia = localStorage.getItem(LS_VISITA) || null;
+
+  function esNuevoParaMi(a) {
+    if (!visitaPrevia) return false;      // primera vez: nada es "nuevo desde", todo lo es
+    var f = a.first_seen || "";
+    return f > visitaPrevia;
+  }
+
+  function marcarVisita() {
+    try { localStorage.setItem(LS_VISITA, new Date().toISOString().slice(0, 10)); } catch (e) {}
+  }
 
   /* Cuantas tarjetas se pintan de entrada por seccion. No es paginado: es una primera
      tanda y un boton que AGREGA. Nunca se pierde lo que ya scrolleaste. */
@@ -790,6 +811,13 @@
       fila.title = "La fecha sale de la ficha del aviso, no del listado. Se completa corriendo scripts/detalle.py.";
     } else {
       fila.textContent = textoAntiguedadAviso(a) + (dpub <= DIAS_NUEVO ? "  ·  NUEVO" : "");
+    }
+    if (esNuevoParaMi(a)) {
+      var sv = el("span", "sello-sinver", "SIN VER");
+      sv.title = "No estaba la ultima vez que abriste la pagina.";
+      fila.appendChild(sv);
+    }
+    if (false) {
       if (dpub > 180) {
         fila.title = "Lleva " + dpub + " dias publicado. Un aviso que no se alquila en todo " +
           "ese tiempo es un precio que el mercado no convalido: hay margen para ofertar.";
@@ -1581,6 +1609,8 @@
       return d !== null && d <= DIAS_NUEVO;
     });
 
+    var desdeVos = considerados.filter(esNuevoParaMi);
+
     var s = el("div", "seccion inicio");
     var corrida = D.generado ? fechaCorta(D.generado) : null;
 
@@ -1589,19 +1619,32 @@
         "<h2>Hoy</h2>" +
         (corrida ? '<p class="inicio-sub">Ultima busqueda <b>' + corrida + "</b></p>" : "") +
       "</div>" +
+      /* El primer atajo es el unico numero que cambia de un dia al otro. Los otros dos
+         son casi los mismos toda la semana, y ponerlos primero es lo que hacia sentir
+         que la pagina no se movia. */
       '<div class="inicio-atajos">' +
+        atajo("explorar", visitaPrevia ? "Nuevas para vos" : "Sin ver",
+              visitaPrevia ? desdeVos.length : considerados.length,
+              visitaPrevia ? "desde que miraste" : "es tu primera visita") +
         atajo("nuevos", "Para llamar", nuevos.length,
               "publicadas hace " + DIAS_NUEVO + " dias o menos") +
         atajo("favoritos", "Favoritos", favs.length, "las que marcaste") +
-        atajo("explorar", "Explorar", considerados.length, "todo lo que pasa los filtros") +
-      "</div>";
+      "</div>" +
+      (visitaPrevia && !desdeVos.length
+        ? '<p class="inicio-nada">Desde que miraste no entro ninguna nueva. ' +
+          "Lo de abajo ya lo viste.</p>"
+        : "");
 
     /* La mejor de hoy, entera. Un numero manda a una lista; una propiedad se
        decide. Sin esto la pantalla de inicio seria un indice y nada mas. */
-    var mejor = ordenar(nuevos.length ? nuevos : considerados)[0];
+    var pozo = desdeVos.length ? desdeVos : (nuevos.length ? nuevos : considerados);
+    var rotulo = desdeVos.length ? "La mejor de las nuevas para vos"
+               : nuevos.length ? "La mejor de las recientes"
+               : "La mejor de la lista";
+    var mejor = ordenar(pozo)[0];
     if (mejor) {
       var t = el("div", "inicio-mejor");
-      t.appendChild(el("h3", null, nuevos.length ? "La mejor de las nuevas" : "La mejor de la lista"));
+      t.appendChild(el("h3", null, rotulo));
       var g = el("div", "grilla");
       g.appendChild(card(mejor));
       t.appendChild(g);
@@ -2043,6 +2086,9 @@
     aplicarDecisionesLocales();   // antes del primer render, o el corazon miente
     pintarBanda();
     render();
+    /* El sello de visita va DESPUES del primer render. Antes, `visitaPrevia` seria
+       hoy mismo y "nuevas para vos" daria cero para siempre. */
+    marcarVisita();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);

@@ -118,6 +118,13 @@
       "compra": 1480,
       "fuente": "dolarapi/oficial",
       "actualizado": "2026-09-04T18:55:00.000Z"
+    },
+    {
+      "fecha": "2026-09-08",
+      "venta": 1530.0,
+      "compra": 1480,
+      "fuente": "dolarapi/oficial",
+      "actualizado": "2026-09-07T18:55:00.000Z"
     }
   ]
 }

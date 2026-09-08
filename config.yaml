@@ -284,6 +284,12 @@ busqueda:
                                    # fetch.plan_de_barrido).
 
 fotos:
+  # Cuantos avisos se revalidan por corrida. Es UN pedido cada uno (sin fotos, sin
+  # reparsear), asi que con la pausa de 3-5 s son unos 4 minutos. Separado de
+  # `fichas_por_corrida` a proposito: mezclados, la cola de revalidacion crecio hasta
+  # 305 con un tope de 15 y nunca se vacio. Ver main.py.
+  vigencia_por_corrida: 60
+
   fichas_por_corrida: 15           # cuantas fichas nuevas se abren por dia, ademas de los
                                    # favoritos (que se revalidan SIEMPRE). El listado ya
                                    # trae casi todo; la ficha solo agrega fotos locales.

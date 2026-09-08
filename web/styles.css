@@ -1842,3 +1842,26 @@ table.ficha td:last-child { font-family: var(--mono); font-size: 12.5px; }
   .tabla-desc th:first-child,
   .tabla-desc td:first-child { padding-left: 10px; }
 }
+
+/* Dos sellos que NO significan lo mismo y no pueden parecerse:
+   NUEVO  = el aviso se publico hace poco. Es cierto durante 14 dias seguidos.
+   SIN VER = no estaba la ultima vez que abriste la pagina. Es cierto una sola vez. */
+.sello-sinver {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--acento);
+  color: #fff;
+  font: 600 9.5px/1.5 var(--mono, ui-monospace, monospace);
+  letter-spacing: .08em;
+  vertical-align: 1px;
+}
+
+.inicio-nada {
+  margin: -10px 0 20px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--hundido);
+  color: var(--ink-2);
+  font-size: 13px;
+}

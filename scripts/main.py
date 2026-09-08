@@ -378,6 +378,36 @@ def correr(sin_red: bool = False, sin_api: bool = False, desde_cache: bool = Fal
         _score.procesar(doc["avisos"], cfg)
         objetivo = [a["id"] for a in doc["avisos"] if a.get("pinned")]
 
+        # REVALIDAR VIGENCIA ES BARATO Y BAJAR LA FICHA NO. Estaban en el mismo
+        # presupuesto, y por eso habia 305 avisos en cola de revalidacion con un tope
+        # de 15 por corrida: la cola crecia veinte veces mas rapido de lo que se
+        # vaciaba. Resultado medido el 2026-09-08: 129 avisos llevaban 18 barridos sin
+        # aparecer y seguian listados como vigentes, y el 42% de la lista corta no
+        # habia salido en el barrido del dia. Mario, en sus palabras: "siento que
+        # siempre veo lo mismo". Lo estaba viendo: inventario muerto sostenido arriba
+        # por su score.
+        #
+        # `solo_vigencia` ya existia en detalle.py y nadie lo llamaba: es UN pedido,
+        # sin fotos y sin reparsear la ficha. Con eso la revalidacion tiene su propia
+        # cuota, mucho mas alta, sin tocar el presupuesto de fichas.
+        vig = int(cfg.get("fotos", {}).get("vigencia_por_corrida", 60))
+        if vig > 0:
+            sospechosos = [a for a in doc["avisos"]
+                           if a.get("seccion") in ("candidatos", "al_limite", "favoritos")
+                           and a.get("estado_aviso") != "desaparecido"
+                           and (a.get("ausente_veces") or 0) >= 2]
+            # El que lleva mas barridos sin aparecer es del que menos se sabe.
+            sospechosos.sort(key=lambda a: -(a.get("ausente_veces") or 0))
+            if sospechosos:
+                rv = detalle.refrescar([a["id"] for a in sospechosos[:vig]], solo_vigencia=True)
+                log["vigencia_revisada"] = len(rv["ok"]) + len(rv["desaparecidos"])
+                log["vigencia_pendiente"] = max(0, len(sospechosos) - vig)
+                log["desaparecidos"] += [d for d in rv["desaparecidos"]
+                                         if d["id"] not in {x["id"] for x in log["desaparecidos"]}]
+                # El barrido de vigencia acaba de cambiar estado_aviso: sin volver a
+                # puntuar, los que se cayeron siguen en la lista corta de esta corrida.
+                _score.procesar(doc["avisos"], cfg)
+
         tope = int(cfg.get("fotos", {}).get("fichas_por_corrida", 15))
         if tope > 0:
             # Primero los candidatos que hoy no salieron en el barrido: son los unicos de
